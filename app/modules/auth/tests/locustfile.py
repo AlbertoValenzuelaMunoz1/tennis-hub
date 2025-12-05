@@ -1,7 +1,13 @@
-from locust import HttpUser, TaskSet, task
+import os
+
+from locust import HttpUser, TaskSet, between, task
 
 from core.environment.host import get_host_for_locust_testing
 from core.locust.common import fake, get_csrf_token
+
+LOGIN_EMAIL = os.getenv("LOCUST_EMAIL", "user1@example.com")
+LOGIN_PASSWORD = os.getenv("LOCUST_PASSWORD", "1234")
+TWO_FA_CODE = os.getenv("LOCUST_2FA_CODE", "123456")  # FLASK_ENV=testing usa 123456
 
 
 class SignupBehavior(TaskSet):
@@ -42,14 +48,47 @@ class LoginBehavior(TaskSet):
         csrf_token = get_csrf_token(response)
 
         response = self.client.post(
-            "/login", data={"email": "user1@example.com", "password": "1234", "csrf_token": csrf_token}
+            "/login",
+            data={"email": LOGIN_EMAIL, "password": LOGIN_PASSWORD, "csrf_token": csrf_token},
         )
         if response.status_code != 200:
             print(f"Login failed: {response.status_code}")
 
 
+class TwoFactorLoginBehavior(TaskSet):
+    def on_start(self):
+        self.ensure_logged_out()
+        self.login_with_2fa()
+
+    def ensure_logged_out(self):
+        self.client.get("/logout", name="2fa_logout")
+
+    @task
+    def login_with_2fa(self):
+        login_page = self.client.get("/login", name="2fa_login_page")
+        csrf = get_csrf_token(login_page)
+
+        # Primer paso: credenciales
+        resp = self.client.post(
+            "/login",
+            data={"email": LOGIN_EMAIL, "password": LOGIN_PASSWORD, "csrf_token": csrf},
+            name="2fa_login_submit",
+            allow_redirects=True,
+        )
+
+        # Segundo paso: token 2FA (solo si se redirige)
+        twofa_page = self.client.get("/login/2fa", name="2fa_page")
+        if twofa_page.status_code == 200 and "Two-Factor" in twofa_page.text:
+            twofa_csrf = get_csrf_token(twofa_page)
+            self.client.post(
+                "/login/2fa",
+                data={"token": TWO_FA_CODE, "csrf_token": twofa_csrf},
+                name="2fa_submit",
+                allow_redirects=True,
+            )
+
+
 class AuthUser(HttpUser):
-    tasks = [SignupBehavior, LoginBehavior]
-    min_wait = 5000
-    max_wait = 9000
+    tasks = [SignupBehavior, LoginBehavior, TwoFactorLoginBehavior]
+    wait_time = between(5, 9)
     host = get_host_for_locust_testing()
