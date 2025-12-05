@@ -122,7 +122,138 @@ def test_login_user_without_2fa_goes_straight_home():
         close_driver(driver)
 
 
+def test_login_user3_rejects_invalid_2fa_code():
+
+    driver = initialize_driver()
+
+    try:
+        host = get_host_for_selenium_testing()
+
+        driver.get(f"{host}/login")
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.NAME, "email"))
+        )
+
+        driver.find_element(By.NAME, "email").send_keys("user3@example.com")
+        password_field = driver.find_element(By.NAME, "password")
+        password_field.send_keys("1234")
+        password_field.send_keys(Keys.RETURN)
+
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "token"))
+        )
+        driver.find_element(By.ID, "token").send_keys("654321")
+        driver.find_element(By.ID, "token").send_keys(Keys.RETURN)
+
+        alert = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".alert-danger")
+            )
+        )
+        assert "Invalid 2FA token" in alert.text
+        assert "/login/2fa" in driver.current_url
+    finally:
+        close_driver(driver)
+
+
+def test_enable_2fa_for_user2_success():
+
+    driver = initialize_driver()
+
+    try:
+        host = get_host_for_selenium_testing()
+
+        driver.get(f"{host}/login")
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.NAME, "email"))
+        )
+        driver.find_element(By.NAME, "email").send_keys("user2@example.com")
+        password_field = driver.find_element(By.NAME, "password")
+        password_field.send_keys("1234")
+        password_field.send_keys(Keys.RETURN)
+
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(
+                (
+                    By.XPATH,
+                    "//h1[contains(@class, 'h2 mb-3') and contains(., 'Latest datasets')]",
+                )
+            )
+        )
+
+        driver.get(f"{host}/2fa/enable")
+        WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "form button[type='submit']"))
+        ).click()
+
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "token"))
+        )
+        driver.find_element(By.ID, "token").send_keys("123456")
+        driver.find_element(By.ID, "token").send_keys(Keys.RETURN)
+
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(
+                (By.XPATH, "//p[contains(., 'Two-factor authentication is') and contains(., 'enabled')]")
+            )
+        )
+        assert "Two-factor authentication has been enabled" in driver.page_source
+    finally:
+        close_driver(driver)
+
+
+def test_disable_2fa_for_user4_success():
+
+    driver = initialize_driver()
+
+    try:
+        host = get_host_for_selenium_testing()
+
+        driver.get(f"{host}/login")
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.NAME, "email"))
+        )
+        driver.find_element(By.NAME, "email").send_keys("user4@example.com")
+        password_field = driver.find_element(By.NAME, "password")
+        password_field.send_keys("1234")
+        password_field.send_keys(Keys.RETURN)
+
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "token"))
+        )
+        driver.find_element(By.ID, "token").send_keys("123456")
+        driver.find_element(By.ID, "token").send_keys(Keys.RETURN)
+
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(
+                (
+                    By.XPATH,
+                    "//h1[contains(@class, 'h2 mb-3') and contains(., 'Latest datasets')]",
+                )
+            )
+        )
+
+        driver.get(f"{host}/profile/edit")
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "form[action$='/2fa/disable'] #token"))
+        )
+        driver.find_element(By.CSS_SELECTOR, "form[action$='/2fa/disable'] #token").send_keys("123456")
+        driver.find_element(By.CSS_SELECTOR, "form[action$='/2fa/disable'] button[type='submit']").click()
+
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(
+                (By.XPATH, "//p[contains(., 'Two-factor authentication is') and contains(., 'disabled')]")
+            )
+        )
+        assert "Two-factor authentication has been disabled." in driver.page_source
+    finally:
+        close_driver(driver)
+
+
 # Call the test function
 test_login_and_check_element()
 test_login_user3_requires_2fa_and_accepts_valid_code()
 test_login_user_without_2fa_goes_straight_home()
+test_login_user3_rejects_invalid_2fa_code()
+#test_enable_2fa_for_user2_success()
+#test_disable_2fa_for_user4_success()

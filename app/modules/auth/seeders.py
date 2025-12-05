@@ -14,6 +14,7 @@ class AuthSeeder(BaseSeeder):
             User(email="user1@example.com", password="1234"),
             User(email="user2@example.com", password="1234"),
             User(email="user3@example.com", password="1234", has_2fa_enabled=True),
+            User(email="user4@example.com", password="1234", has_2fa_enabled=True),
 
         ]
 
