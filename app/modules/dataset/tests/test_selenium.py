@@ -155,6 +155,112 @@ def test_upload_dataset():
         # Close the browser
         close_driver(driver)
 
+
+def _login_user1(driver, host):
+    """Log in as user1 to reuse across dataset upload scenarios."""
+    driver.get(f"{host}/login")
+    wait_for_page_to_load(driver)
+    driver.find_element(By.NAME, "email").send_keys("user1@example.com")
+    password_field = driver.find_element(By.NAME, "password")
+    password_field.send_keys("1234")
+    password_field.send_keys(Keys.RETURN)
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located(
+            (By.XPATH, "//h1[contains(@class, 'h2 mb-3') and contains(., 'Latest datasets')]")
+        )
+    )
+
+
+def _fill_basic_dataset_fields(driver, host, file_path, title="CSV validation test"):
+    driver.get(f"{host}/dataset/upload")
+    wait_for_page_to_load(driver)
+
+    driver.find_element(By.NAME, "title").send_keys(title)
+    driver.find_element(By.NAME, "desc").send_keys("Description")
+    driver.find_element(By.NAME, "tags").send_keys("tag1,tag2")
+
+    dropzone = driver.find_element(By.CLASS_NAME, "dz-hidden-input")
+    dropzone.send_keys(file_path)
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located(
+            (By.XPATH, f"//ul[@id='file-list']//h4[contains(text(), '{os.path.basename(file_path)}')]")
+        )
+    )
+    # Agree to terms so the upload button activates
+    driver.find_element(By.ID, "agreeCheckbox").send_keys(Keys.SPACE)
+    WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.ID, "upload_button"))
+    )
+
+
+def test_upload_dataset_with_invalid_csv_headers_shows_error():
+    driver = initialize_driver()
+
+    try:
+        host = get_host_for_selenium_testing()
+        _login_user1(driver, host)
+
+        invalid_file = os.path.abspath(
+            "app/modules/dataset/csv_examples/invalid_missing_columns.csv"
+        )
+        _fill_basic_dataset_fields(driver, host, invalid_file, title="Invalid headers")
+
+        driver.find_element(By.ID, "upload_button").click()
+
+        # The server should reject the dataset and surface the error on screen
+        error_box = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "upload_error"))
+        )
+        assert "missing columns" in error_box.text or "must include the columns" in error_box.text
+    finally:
+        close_driver(driver)
+
+
+def test_upload_dataset_with_valid_csv_succeeds():
+    driver = initialize_driver()
+
+    try:
+        host = get_host_for_selenium_testing()
+        _login_user1(driver, host)
+
+        valid_file = os.path.abspath(
+            "app/modules/dataset/csv_examples/2023.csv"
+        )
+        _fill_basic_dataset_fields(driver, host, valid_file, title="Valid CSV upload")
+
+        driver.find_element(By.ID, "upload_button").click()
+
+        WebDriverWait(driver, 15).until(
+            EC.url_contains("/dataset/list")
+        )
+        assert "/dataset/list" in driver.current_url
+    finally:
+        close_driver(driver)
+
+
+def test_rejects_non_csv_extension_client_side():
+    driver = initialize_driver()
+
+    try:
+        host = get_host_for_selenium_testing()
+        _login_user1(driver, host)
+
+        bad_file = os.path.abspath(
+            "app/modules/dataset/csv_examples/not_csv.txt"
+        )
+        driver.get(f"{host}/dataset/upload")
+        wait_for_page_to_load(driver)
+
+        dropzone = driver.find_element(By.CLASS_NAME, "dz-hidden-input")
+        dropzone.send_keys(bad_file)
+
+        alert_box = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "alerts"))
+        )
+        assert "Invalid file extension" in alert_box.text
+    finally:
+        close_driver(driver)
+
 def test_testdownloadcounter():
     driver = initialize_driver()
 
@@ -327,6 +433,9 @@ def test_testcarritos():
 
 # Call the test function
 test_upload_dataset()
+test_upload_dataset_with_invalid_csv_headers_shows_error()
+test_upload_dataset_with_valid_csv_succeeds()
+test_rejects_non_csv_extension_client_side()
 test_testdownloadcounter()
 test_comentarios()
 test_testcarritos()
