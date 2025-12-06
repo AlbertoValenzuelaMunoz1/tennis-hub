@@ -344,7 +344,6 @@ def dataset_stats(dataset_id):
     return jsonify(
         {
             "dataset_id": dataset.id,
-            "download_count": dataset.download_count or 0,
             "view_count": views,
         }
     ), 200

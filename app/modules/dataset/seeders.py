@@ -102,7 +102,7 @@ class DataSetSeeder(BaseSeeder):
         working_dir = os.getenv("WORKING_DIR", "")
         src_folder = os.path.join(working_dir, "app", "modules", "dataset", "csv_examples")
         for i in range(12):
-            file_name = f"{2010+i}.csv"
+            file_name = f"{2019 + (i % 5)}.csv"
             feature_model = seeded_feature_models[i]
             dataset = next(ds for ds in seeded_datasets if ds.id == feature_model.data_set_id)
             user_id = dataset.user_id

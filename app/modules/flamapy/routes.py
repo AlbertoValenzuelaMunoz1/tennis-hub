@@ -37,7 +37,7 @@ def check_uvl(file_id):
 
     try:
         hubfile = HubfileService().get_by_id(file_id)
-        input_stream = FileStream(hubfile.get_path())
+        input_stream = FileStream(hubfile.get_path(), encoding="ISO-8859-1")
         lexer = UVLCustomLexer(input_stream)
 
         error_listener = CustomErrorListener()

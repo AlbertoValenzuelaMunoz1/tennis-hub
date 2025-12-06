@@ -181,48 +181,6 @@
 
         </div>
 
-        <div class="card">
-
-            <div class="card-body">
-
-                <h3> Related publication </h3>
-                
-                David Romero-Organvidez, José A. Galindo, Chico Sundermann, Jose-Miguel Horcas, David Benavides,
-                <i>UVLHub: A feature model data repository using UVL and open science principles</i>,
-                Journal of Systems and Software,
-                2024,
-                112150,
-                ISSN 0164-1212,
-                <a href="https://doi.org/10.1016/j.jss.2024.112150" target="_blank">https://doi.org/10.1016/j.jss.2024.112150</a>
-
-            </div>
-
-            <div class="card-body mt-0 pt-0">
-
-                <button onclick="copyText('bibtex_cite')" class="btn btn-light btn-sm" style="border-radius: 5px; margin-right: 10px">
-                    <i data-feather="clipboard" class="center-button-icon"></i>
-                    Copy in BibTex
-                </button>
-
-                <button onclick="copyText('ris_cite')" class="btn btn-light btn-sm" style="border-radius: 5px;">
-                    <i data-feather="clipboard" class="center-button-icon"></i>
-                    Copy in RIS
-                </button>
-
-                <button onclick="copyText('apa_cite')" class="btn btn-light btn-sm" style="border-radius: 5px;">
-                    <i data-feather="clipboard" class="center-button-icon"></i>
-                    Copy in APA
-                </button>
-
-                <button onclick="copyText('text_cite')" class="btn btn-light btn-sm" style="border-radius: 5px;">
-                    <i data-feather="clipboard" class="center-button-icon"></i>
-                    Copy in text
-                </button>
-
-            </div>
-
-        </div>
-
 
     </div>
 
@@ -234,7 +192,7 @@
 
                 <div class="row">
                     <div class="col-12 d-flex justify-content-between align-items-center">
-                        <h4 style="margin-bottom: 0px">UVL models</h4>
+                        <h4 style="margin-bottom: 0px">Tennis models</h4>
                         <h4 style="margin-bottom: 0px;"><span class="badge bg-dark">{{ dataset.get_files_count() }}</span></h4>
                     </div>
                 </div>
@@ -283,33 +241,6 @@
                                             <a class="dropdown-item" href="{{ url_for('flamapy.valid', file_id=file.id) }}">SAT validity check</a>
                                         </li>
                                         -->
-                                    </ul>
-                                </div>
-                                
-                                <div class="btn-group" role="group">
-                                    <button id="btnGroupDropExport{{ file.id }}" type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style=" border-radius: 5px;">
-                                        <i data-feather="download"></i> Export
-                                    </button>
-
-                                    <ul class="dropdown-menu" aria-labelledby="btnGroupDropExport{{ file.id }}">
-                                        <li>
-                                            <a class="dropdown-item" href="{{ url_for('hubfile.download_file', file_id=file.id) }}">
-                                                UVL
-                                            </a>
-                                            <a class="dropdown-item" href="{{ url_for('flamapy.to_glencoe', file_id=file.id) }}">
-                                                Glencoe
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="{{ url_for('flamapy.to_cnf', file_id=file.id) }}">
-                                                DIMACS
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="{{ url_for('flamapy.to_splot', file_id=file.id) }}">
-                                                SPLOT
-                                            </a>
-                                        </li>
                                     </ul>
                                 </div>
 
@@ -433,8 +364,6 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        feather.replace();
-
 
         // cargar estadísticas del dataset y actualizar badges
         try {
@@ -442,9 +371,7 @@
                 .then(resp => resp.ok ? resp.json() : Promise.reject(resp))
                 .then(data => {
                     const vb = document.getElementById('views-badge');
-                    const db = document.getElementById('downloads-badge');
                     if (vb) vb.textContent = `Views: ${data.view_count ?? 0}`;
-                    if (db) db.textContent = `Downloads: ${data.download_count ?? 0}`;
                 })
                 .catch(err => console.debug('No se pudieron cargar las stats:', err));
         } catch (err) {
