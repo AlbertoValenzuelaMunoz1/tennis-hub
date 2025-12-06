@@ -10,33 +10,67 @@ Fork verticalizado de UVLHub centrado en datasets de tenis. Solo se listan las d
 
 <div align="center">
 
-<strong>Rama main</strong>  
-<a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub">
-  <img src="https://sonarcloud.io/api/project_badges/measure?project=egc_tennis-hub&metric=alert_status" alt="Quality Gate main" />
-</a>
-<a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub">
-  <img src="https://sonarcloud.io/api/project_badges/measure?project=egc_tennis-hub&metric=coverage" alt="Coverage main" />
-</a>
-<a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub">
-  <img src="https://sonarcloud.io/api/project_badges/measure?project=egc_tennis-hub&metric=bugs" alt="Bugs main" />
-</a>
-<a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub">
-  <img src="https://sonarcloud.io/api/project_badges/measure?project=egc_tennis-hub&metric=vulnerabilities" alt="Vulnerabilities main" />
-</a>
+<table>
+  <tr>
+    <th style="text-align:center;">Rama main</th>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub">
+        <img src="https://img.shields.io/sonar/alert_status/egc_tennis-hub?server=https%3A%2F%2Fsonarcloud.io&label=quality%20gate&style=for-the-badge" alt="Quality Gate main">
+      </a>
+      <a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub">
+        <img src="https://img.shields.io/sonar/coverage/egc_tennis-hub?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge" alt="Coverage main">
+      </a>
+      <a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub">
+        <img src="https://img.shields.io/sonar/bugs/egc_tennis-hub?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge" alt="Bugs main">
+      </a>
+      <a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub">
+        <img src="https://img.shields.io/sonar/vulnerabilities/egc_tennis-hub?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge" alt="Vulnerabilities main">
+      </a>
+      <a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub">
+        <img src="https://img.shields.io/sonar/code_smells/egc_tennis-hub?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge" alt="Code smells main">
+      </a>
+      <a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub">
+        <img src="https://img.shields.io/sonar/security_hotspots/egc_tennis-hub?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge" alt="Security hotspots main">
+      </a>
+      <a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub">
+        <img src="https://img.shields.io/sonar/duplicated_lines_density/egc_tennis-hub?server=https%3A%2F%2Fsonarcloud.io&label=duplication&style=for-the-badge" alt="Duplication main">
+      </a>
+    </td>
+  </tr>
+</table>
 
-<strong>Rama trunk</strong>  
-<a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub-trunk">
-  <img src="https://sonarcloud.io/api/project_badges/measure?project=egc_tennis-hub-trunk&metric=alert_status" alt="Quality Gate trunk" />
-</a>
-<a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub-trunk">
-  <img src="https://sonarcloud.io/api/project_badges/measure?project=egc_tennis-hub-trunk&metric=coverage" alt="Coverage trunk" />
-</a>
-<a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub-trunk">
-  <img src="https://sonarcloud.io/api/project_badges/measure?project=egc_tennis-hub-trunk&metric=bugs" alt="Bugs trunk" />
-</a>
-<a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub-trunk">
-  <img src="https://sonarcloud.io/api/project_badges/measure?project=egc_tennis-hub-trunk&metric=vulnerabilities" alt="Vulnerabilities trunk" />
-</a>
+<table>
+  <tr>
+    <th style="text-align:center;">Rama trunk</th>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub-trunk">
+        <img src="https://img.shields.io/sonar/alert_status/egc_tennis-hub-trunk?server=https%3A%2F%2Fsonarcloud.io&label=quality%20gate&style=for-the-badge" alt="Quality Gate trunk">
+      </a>
+      <a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub-trunk">
+        <img src="https://img.shields.io/sonar/coverage/egc_tennis-hub-trunk?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge" alt="Coverage trunk">
+      </a>
+      <a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub-trunk">
+        <img src="https://img.shields.io/sonar/bugs/egc_tennis-hub-trunk?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge" alt="Bugs trunk">
+      </a>
+      <a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub-trunk">
+        <img src="https://img.shields.io/sonar/vulnerabilities/egc_tennis-hub-trunk?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge" alt="Vulnerabilities trunk">
+      </a>
+      <a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub-trunk">
+        <img src="https://img.shields.io/sonar/code_smells/egc_tennis-hub-trunk?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge" alt="Code smells trunk">
+      </a>
+      <a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub-trunk">
+        <img src="https://img.shields.io/sonar/security_hotspots/egc_tennis-hub-trunk?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge" alt="Security hotspots trunk">
+      </a>
+      <a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub-trunk">
+        <img src="https://img.shields.io/sonar/duplicated_lines_density/egc_tennis-hub-trunk?server=https%3A%2F%2Fsonarcloud.io&label=duplication&style=for-the-badge" alt="Duplication trunk">
+      </a>
+    </td>
+  </tr>
+</table>
 
 </div>
 
