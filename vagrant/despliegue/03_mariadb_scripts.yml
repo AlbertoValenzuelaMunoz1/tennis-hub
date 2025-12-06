@@ -17,6 +17,11 @@
       WORKING_DIR: "{{ working_dir }}"
 
   tasks:
+    - name: Install mariadb-client
+      apt:
+        name: mariadb-client
+        state: present
+        update_cache: yes
     - name: Set permissions for wait-for-db.sh
       file:
         path: "{{ working_dir }}scripts/wait-for-db.sh"
