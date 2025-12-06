@@ -1,0 +1,65 @@
+---
+- hosts: all
+  become: true
+
+  vars:
+    common_environment:
+      FLASK_APP_NAME: "{{ flask_app_name }}"
+      FLASK_ENV: "{{ flask_env }}"
+      DOMAIN: "{{ domain }}"
+      MARIADB_HOSTNAME: "{{ mariadb_hostname }}"
+      MARIADB_PORT: "{{ mariadb_port }}"
+      MARIADB_DATABASE: "{{ mariadb_database }}"
+      MARIADB_TEST_DATABASE: "{{ mariadb_test_database }}"
+      MARIADB_USER: "{{ mariadb_user }}"
+      MARIADB_PASSWORD: "{{ mariadb_password }}"
+      MARIADB_ROOT_PASSWORD: "{{ mariadb_root_password }}"
+      WORKING_DIR: "{{ working_dir }}"
+
+  tasks:
+
+    - name: Add webhook to .moduleignore
+      shell: echo "webhook" > {{ working_dir }}.moduleignore
+      args:
+        executable: /bin/bash
+      environment: "{{ common_environment }}"
+
+    - name: Run Flask application with migration logic and Gunicorn
+      shell: |
+        source {{ working_dir }}vagrant_venv/bin/activate
+        cd {{ working_dir }}
+
+        # Check if database is empty
+        TABLE_COUNT=$(mariadb -u $MARIADB_USER -p$MARIADB_PASSWORD -h $MARIADB_HOSTNAME -P $MARIADB_PORT -D $MARIADB_DATABASE -sse \
+          "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$MARIADB_DATABASE';")
+
+        if [ "$TABLE_COUNT" -eq 0 ]; then
+            echo "Empty database, migrating..."
+
+            # Get latest migration revision
+            LATEST_REVISION=$(ls -1 migrations/versions/*.py | grep -v "__pycache__" | sort -r | head -n 1 | sed 's/.*\/\(.*\)\.py/\1/')
+            echo "Latest revision: $LATEST_REVISION"
+
+            flask db upgrade
+        else
+            echo "Database already initialized, updating migrations..."
+
+            # Get current migration revision
+            CURRENT_REVISION=$(mariadb -u $MARIADB_USER -p$MARIADB_PASSWORD -h $MARIADB_HOSTNAME -P $MARIADB_PORT -D $MARIADB_DATABASE -sse \
+              "SELECT version_num FROM alembic_version LIMIT 1;")
+
+            if [ -z "$CURRENT_REVISION" ]; then
+                flask db stamp head
+            fi
+
+            flask db upgrade
+        fi
+
+        # Start application with Gunicorn
+        nohup gunicorn --bind 0.0.0.0:5000 app:app --log-level info --timeout 3600 &
+
+      args:
+        executable: /bin/bash
+      environment: "{{ common_environment }}"
+      async: 1
+      poll: 0
