@@ -1,5 +1,5 @@
 <div style="text-align: center;">
-  <img src="app/static/img/icons/flavicon.png" alt="Tennis Ball">
+  <img src="app/static/img/icons/flavicon.png" alt="Tennis Ball" width="96">
 </div>
 
 # Tennis Hub
