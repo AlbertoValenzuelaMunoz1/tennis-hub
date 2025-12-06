@@ -35,7 +35,7 @@ Fork verticalizado de UVLHub centrado en datasets de tenis. Solo se listan las d
         <img src="https://img.shields.io/sonar/security_hotspots/egc_tennis-hub?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge" alt="Security hotspots main">
       </a>
       <a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub">
-        <img src="https://img.shields.io/sonar/duplicated_lines_density/egc_tennis-hub?server=https%3A%2F%2Fsonarcloud.io&label=duplication&style=for-the-badge" alt="Duplication main">
+        <img src="https://sonarcloud.io/api/project_badges/measure?project=egc_tennis-hub&metric=duplicated_lines_density" alt="Duplication main">
       </a>
     </td>
   </tr>
@@ -66,7 +66,7 @@ Fork verticalizado de UVLHub centrado en datasets de tenis. Solo se listan las d
         <img src="https://img.shields.io/sonar/security_hotspots/egc_tennis-hub-trunk?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge" alt="Security hotspots trunk">
       </a>
       <a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub-trunk">
-        <img src="https://img.shields.io/sonar/duplicated_lines_density/egc_tennis-hub-trunk?server=https%3A%2F%2Fsonarcloud.io&label=duplication&style=for-the-badge" alt="Duplication trunk">
+        <img src="https://sonarcloud.io/api/project_badges/measure?project=egc_tennis-hub-trunk&metric=duplicated_lines_density" alt="Duplication trunk">
       </a>
     </td>
   </tr>
