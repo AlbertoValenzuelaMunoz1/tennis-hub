@@ -17,9 +17,6 @@ Fork verticalizado de UVLHub centrado en datasets de tenis. Solo se listan las d
   <tr>
     <td>
       <a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub">
-        <img src="https://img.shields.io/sonar/alert_status/egc_tennis-hub?server=https%3A%2F%2Fsonarcloud.io&label=quality%20gate&style=for-the-badge" alt="Quality Gate main">
-      </a>
-      <a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub">
         <img src="https://img.shields.io/sonar/coverage/egc_tennis-hub?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge" alt="Coverage main">
       </a>
       <a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub">
@@ -44,9 +41,6 @@ Fork verticalizado de UVLHub centrado en datasets de tenis. Solo se listan las d
   </tr>
   <tr>
     <td>
-      <a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub-trunk">
-        <img src="https://img.shields.io/sonar/alert_status/egc_tennis-hub-trunk?server=https%3A%2F%2Fsonarcloud.io&label=quality%20gate&style=for-the-badge" alt="Quality Gate trunk">
-      </a>
       <a href="https://sonarcloud.io/project/overview?id=egc_tennis-hub-trunk">
         <img src="https://img.shields.io/sonar/coverage/egc_tennis-hub-trunk?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge" alt="Coverage trunk">
       </a>
