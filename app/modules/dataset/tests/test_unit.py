@@ -1,16 +1,19 @@
 import io
 import os
+import re
+import shutil
 import tempfile
 import zipfile
-from app.modules.dataset.routes import CSV_REQUIRED_COLUMNS, validate_uploaded_csv_files
-from app.modules.hubfile.models import Hubfile
+
+import pytest
+import requests
 from bs4 import BeautifulSoup
-from app.modules.dataset.services import DSMetaDataService,DataSetService
+
+from app.modules.dataset.routes import CSV_REQUIRED_COLUMNS, resolve_github_zip_url, validate_uploaded_files
+from app.modules.dataset.services import DSMetaDataService, DataSetService
 from app.modules.dataset.models import DataSet
 from app.modules.auth.models import User
-import re
-from app import db
-from flask import current_app
+from app.modules.hubfile.models import Hubfile
 
 
 def test_download_bulk_files_returns_zip(test_database_poblated):
@@ -282,6 +285,164 @@ def test_trending_download_links_work(test_database_poblated):
     assert resp.status_code == 200, f"Download from trending page should succeed (GET {download_url})"
 
 
+def _login_seed_user(client):
+    return client.post(
+        "/login",
+        data=dict(email="user1@example.com", password="1234"),
+        follow_redirects=True,
+    )
+
+
+def _make_zip_bytes(entries):
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w") as archive:
+        for name, content in entries:
+            archive.writestr(name, content)
+    buffer.seek(0)
+    return buffer.getvalue()
+
+
+def test_resolve_github_zip_url_variants():
+    assert (
+        resolve_github_zip_url("https://github.com/org/repo")
+        == "https://github.com/org/repo/archive/refs/heads/main.zip"
+    )
+    assert (
+        resolve_github_zip_url("https://github.com/org/repo/tree/dev")
+        == "https://github.com/org/repo/archive/refs/heads/dev.zip"
+    )
+    assert resolve_github_zip_url("https://example.com/archive.zip") == "https://example.com/archive.zip"
+    with pytest.raises(ValueError):
+        resolve_github_zip_url("https://gitlab.com/org/repo")
+
+
+def test_import_dataset_from_github_requires_url(test_database_poblated):
+    client = test_database_poblated
+    _login_seed_user(client)
+
+    response = client.post("/dataset/file/import/github", json={})
+
+    assert response.status_code == 400
+    assert response.get_json()["message"] == "GitHub URL is required."
+
+
+def test_import_dataset_from_github_rejects_invalid_link(test_database_poblated):
+    client = test_database_poblated
+    _login_seed_user(client)
+
+    response = client.post(
+        "/dataset/file/import/github",
+        json={"github_url": "https://gitlab.com/org/repo"},
+    )
+
+    assert response.status_code == 400
+    assert "GitHub URL" in response.get_json()["message"]
+
+
+def test_import_dataset_from_github_handles_download_errors(test_database_poblated, monkeypatch):
+    client = test_database_poblated
+    _login_seed_user(client)
+
+    def fake_get(*args, **kwargs):
+        raise requests.RequestException("network down")
+
+    monkeypatch.setattr("app.modules.dataset.routes.requests.get", fake_get)
+
+    response = client.post(
+        "/dataset/file/import/github",
+        json={"github_url": "https://github.com/org/repo"},
+    )
+
+    assert response.status_code == 400
+    assert "Could not download repository" in response.get_json()["message"]
+
+
+def test_import_dataset_from_github_saves_supported_files(test_database_poblated, monkeypatch):
+    client = test_database_poblated
+    _login_seed_user(client)
+    user = User.query.filter_by(email="user1@example.com").first()
+    temp_folder = user.temp_folder()
+    shutil.rmtree(temp_folder, ignore_errors=True)
+
+    csv_content = ",".join(CSV_REQUIRED_COLUMNS) + "\n" + ",".join(["value"] * len(CSV_REQUIRED_COLUMNS))
+    uvl_content = "featuremodel {}"
+    zip_bytes = _make_zip_bytes(
+        [
+            ("data/valid.csv", csv_content),
+            ("nested/model.uvl", uvl_content),
+        ]
+    )
+
+    class DummyResponse:
+        def __init__(self, content):
+            self.content = content
+            self.status_code = 200
+
+        def raise_for_status(self):
+            return None
+
+    monkeypatch.setattr(
+        "app.modules.dataset.routes.requests.get",
+        lambda *args, **kwargs: DummyResponse(zip_bytes),
+    )
+
+    try:
+        response = client.post(
+            "/dataset/file/import/github",
+            json={"github_url": "https://github.com/org/repo"},
+        )
+        data = response.get_json()
+
+        assert response.status_code == 200
+        assert set(data["files"]) == {"valid.csv", "model.uvl"}
+        assert data["skipped"] == []
+
+        for filename in data["files"]:
+            assert os.path.isfile(os.path.join(temp_folder, filename))
+    finally:
+        shutil.rmtree(temp_folder, ignore_errors=True)
+
+
+def test_import_dataset_from_github_reports_invalid_csv(test_database_poblated, monkeypatch):
+    client = test_database_poblated
+    _login_seed_user(client)
+    user = User.query.filter_by(email="user1@example.com").first()
+    temp_folder = user.temp_folder()
+    shutil.rmtree(temp_folder, ignore_errors=True)
+
+    invalid_csv = ",".join(CSV_REQUIRED_COLUMNS[:-1]) + "\n" + ",".join(["value"] * (len(CSV_REQUIRED_COLUMNS) - 1))
+    zip_bytes = _make_zip_bytes([("invalid.csv", invalid_csv)])
+
+    class DummyResponse:
+        def __init__(self, content):
+            self.content = content
+            self.status_code = 200
+
+        def raise_for_status(self):
+            return None
+
+    monkeypatch.setattr(
+        "app.modules.dataset.routes.requests.get",
+        lambda *args, **kwargs: DummyResponse(zip_bytes),
+    )
+
+    try:
+        response = client.post(
+            "/dataset/file/import/github",
+            json={"github_url": "https://github.com/org/repo"},
+        )
+        data = response.get_json()
+
+        assert response.status_code == 400
+        assert data["files"] == []
+        assert data["skipped"]
+        assert "invalid.csv" in data["skipped"][0]
+        assert "missing columns" in data["skipped"][0]
+        assert "No valid CSV files were found" in data["message"]
+    finally:
+        shutil.rmtree(temp_folder, ignore_errors=True)
+
+
 def _dummy_feature(filename):
     class DummyField:
         def __init__(self, data):
@@ -300,35 +461,37 @@ def _write_csv(path, headers):
         handler.write(",".join(["sample"] * len(headers)))
 
 
-def test_validate_uploaded_csv_files_accepts_matching_headers():
+def test_validate_uploaded_files_accepts_matching_headers():
     with tempfile.TemporaryDirectory() as tmpdir:
         filename = "valid.csv"
         file_path = os.path.join(tmpdir, filename)
         _write_csv(file_path, CSV_REQUIRED_COLUMNS)
 
-        error = validate_uploaded_csv_files(tmpdir, [_dummy_feature(filename)])
+        error = validate_uploaded_files(tmpdir, [_dummy_feature(filename)])
 
         assert error is None
 
 
-def test_validate_uploaded_csv_files_rejects_missing_headers():
+def test_validate_uploaded_files_rejects_missing_headers():
     with tempfile.TemporaryDirectory() as tmpdir:
         filename = "missing.csv"
         file_path = os.path.join(tmpdir, filename)
         _write_csv(file_path, CSV_REQUIRED_COLUMNS[:-1])  # drop last column
 
-        error = validate_uploaded_csv_files(tmpdir, [_dummy_feature(filename)])
+        error = validate_uploaded_files(tmpdir, [_dummy_feature(filename)])
 
         assert error is not None
         assert "missing columns" in error
+        assert filename in error
 
 
-def test_validate_uploaded_csv_files_requires_csv_extension():
+def test_validate_uploaded_files_requires_supported_extension():
     with tempfile.TemporaryDirectory() as tmpdir:
         filename = "invalid.txt"
         file_path = os.path.join(tmpdir, filename)
         _write_csv(file_path, CSV_REQUIRED_COLUMNS)
 
-        error = validate_uploaded_csv_files(tmpdir, [_dummy_feature(filename)])
+        error = validate_uploaded_files(tmpdir, [_dummy_feature(filename)])
 
-        assert error == f"{filename} must be a CSV file."
+        assert error is not None
+        assert "must be one of" in error

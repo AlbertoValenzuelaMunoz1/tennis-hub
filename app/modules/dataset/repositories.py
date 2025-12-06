@@ -98,7 +98,6 @@ class DataSetRepository(BaseRepository):
             self.model.query.join(DSMetaData)
             .filter(DSMetaData.dataset_doi.isnot(None))
             .order_by(desc(self.model.id))
-            .limit(5)
             .all()
         )
 
