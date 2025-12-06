@@ -1,4 +1,5 @@
 import os
+import shutil
 import time
 
 from selenium.webdriver.common.by import By
@@ -28,6 +29,26 @@ def count_datasets(driver, host):
     except Exception:
         amount_datasets = 0
     return amount_datasets
+
+
+def _login_and_open_github_import(driver):
+    host = get_host_for_selenium_testing()
+    driver.get(f"{host}/login")
+    wait_for_page_to_load(driver)
+
+    email_field = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.NAME, "email"))
+    )
+    password_field = driver.find_element(By.NAME, "password")
+    email_field.clear()
+    email_field.send_keys("user1@example.com")
+    password_field.clear()
+    password_field.send_keys("1234")
+    password_field.send_keys(Keys.RETURN)
+    time.sleep(4)
+
+    driver.get(f"{host}/dataset/import/github")
+    wait_for_page_to_load(driver)
 
 
 def test_upload_dataset():
@@ -154,6 +175,7 @@ def test_upload_dataset():
     finally:
         # Close the browser
         close_driver(driver)
+        
 
 
 def _login_user1(driver, host):
@@ -406,6 +428,77 @@ def test_testcarritos():
         # Close the browser
         close_driver(driver)
 
+
+def test_import_github_requires_url_feedback():
+    driver = initialize_driver()
+
+    try:
+        _login_and_open_github_import(driver)
+
+        github_btn = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.ID, "github_import_btn"))
+        )
+        github_btn.click()
+
+        feedback = WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located((By.ID, "import_feedback"))
+        )
+        assert "GitHub" in feedback.text
+    finally:
+        close_driver(driver)
+
+
+def test_import_github_rejects_non_github_link():
+    driver = initialize_driver()
+
+    try:
+        _login_and_open_github_import(driver)
+
+        github_input = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "github_url"))
+        )
+        github_input.clear()
+        github_input.send_keys("https://gitlab.com/org/repo")
+        driver.find_element(By.ID, "github_import_btn").click()
+
+        feedback = WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located((By.ID, "import_feedback"))
+        )
+        text = feedback.text.lower()
+        assert "github" in text and "valid" in text
+    finally:
+        close_driver(driver)
+
+def test_testImportarBien():
+    driver = initialize_driver()
+    host = get_host_for_selenium_testing()
+    
+    try:
+        driver.get(host)
+        driver.set_window_size(602, 743)
+        driver.get(host+"/login")
+        driver.find_element(By.ID, "email").click()
+        driver.find_element(By.ID, "email").send_keys("user1@example.com")
+        driver.find_element(By.ID, "password").click()
+        driver.find_element(By.ID, "password").send_keys("1234")
+        driver.find_element(By.ID, "submit").click()
+        time.sleep(2)
+        driver.get(host+"/dataset/import/github")
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(
+                (By.ID, "github_url")
+            )
+            ).click()
+        driver.find_element(By.ID, "github_url").send_keys("https://github.com/AlbertoValenzuelaMunoz1/test-repository-tennis-hub")
+        driver.find_element(By.ID, "github_import_btn").click()
+        
+        
+    finally:
+        temp_folder = os.path.join(os.getenv("UPLOADS_DIR", "uploads"),"temp","1")
+        shutil.rmtree(temp_folder, ignore_errors=True)
+        close_driver(driver)
+
+
 """ def test_downloadstest():
     driver = initialize_driver()
     host = get_host_for_selenium_testing()
@@ -440,3 +533,6 @@ test_testdownloadcounter()
 test_comentarios()
 test_testcarritos()
 """ test_downloadstest()"""
+test_testImportarBien()
+test_import_github_requires_url_feedback()
+test_import_github_rejects_non_github_link()
