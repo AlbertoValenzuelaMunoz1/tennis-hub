@@ -38,6 +38,9 @@ if [ $(mariadb -u $MARIADB_USER -p$MARIADB_PASSWORD -h $MARIADB_HOSTNAME -P $MAR
     # Run the migration process to apply all database schema changes
     flask db upgrade
 
+    # Seed initial data when the database starts empty
+    rosemary db:seed -y
+
 else
 
     echo "Database already initialized, updating migrations..."
