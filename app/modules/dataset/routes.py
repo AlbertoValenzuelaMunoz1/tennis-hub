@@ -204,7 +204,7 @@ def validate_csv_file(file_path: str):
 
 
 def extract_supported_files_from_zip(zip_path: str, temp_folder: str):
-    """Extract valid CSV/UVL files from a zip into the user's temp folder."""
+    """Extract valid CSV files from a zip into the user's temp folder."""
     saved_files = []
     skipped = []
     with ZipFile(zip_path, "r") as archive:
