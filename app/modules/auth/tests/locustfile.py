@@ -65,8 +65,13 @@ class TwoFactorLoginBehavior(TaskSet):
 
     @task
     def login_with_2fa(self):
-        login_page = self.client.get("/login", name="2fa_login_page")
-        csrf = get_csrf_token(login_page)
+        response = self.client.get("/login", name="2fa_login_page")
+        if response.status_code != 200 or "Login" not in response.text:
+            print("2FA: Already logged in or unexpected response, redirecting to logout")
+            self.ensure_logged_out()
+            response = self.client.get("/login", name="2fa_login_page_retry")
+
+        csrf = get_csrf_token(response)
 
         # Primer paso: credenciales
         resp = self.client.post(
