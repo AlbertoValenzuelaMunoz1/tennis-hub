@@ -20,6 +20,21 @@
   - **Configuración equivalente a producción**: Utiliza el mismo `Dockerfile.prod` para detectar problemas antes del despliegue.
   - **Dependencies con condiciones**: Los servicios solo inician cuando sus dependencias están saludables.
 
+## Diferencias con otros entornos
+
+| Característica | dev | staging | prod |
+|----------------|-----|---------|------|
+| Hot-reload | ✓ | ✗ | ✗ |
+| Selenium | ✓ | ✗ | ✗ |
+| Locust | ✗ | ✓ | ✗ |
+| Healthchecks | ✗ | ✓ | ✗ |
+| Log rotation | ✗ | ✓ | ✗ |
+| Watchtower | ✗ | ✓ | ✓ |
+| DB separada | ✗ | ✓ | ✓ |
+| Dockerfile | dev | prod | prod |
+| Feature flags | ✗ | ✓ | Según config |
+
+
 ## Cómo lanzar
 
 Antes de cualquier entorno, asegúrate de tener `.env` (y `.env.selenium` si usas Selenium) en la raíz del proyecto.
@@ -44,7 +59,7 @@ Antes de cualquier entorno, asegúrate de tener `.env` (y `.env.selenium` si usa
 - **Ver logs**: `docker logs <nombre_contenedor>` (ej: `web_app_container`, `mariadb_container`, `nginx_web_server_container`, `locust_staging`)
 - **Ver logs en tiempo real**: `docker logs -f <nombre_contenedor>`
 - **Parar entorno**: `docker compose -f <archivo> down`
-- **Parar y eliminar volúmenes**: `docker compose -f <archivo> down -v` (⚠️ elimina datos de BD)
+- **Parar y eliminar volúmenes**: `docker compose -f <archivo> down -v`
 
 ### Flujo de trabajo recomendado
 
