@@ -100,36 +100,36 @@ El proyecto parte de la base de UVLHUB, pero ha sufrido una transformación sust
   * Validación de permisos para asegurar que solo usuarios registrados puedan comentar.
 
 ## Visión global del proceso de desarrollo 
-El proceso para desarrollar Tennis-Hub fue más que solo escribir código. Se trató de meterse de lleno en una cadena completa, súper profesionalizada, de DevOps y control de calidad. Esto aseguraría que cada nueva función se validará antes de que los usuarios finales la vieran. Es esta mirada general del asunto lo que hizo que el sistema, a pesar de venir de un proyecto viejo, se convirtiera en una plataforma robusta, moderna y que se puede mantener. Cada pequeña elección, desde cómo organizar el repositorio hasta automatizar las implementaciones, siempre tuvo el objetivo de mejorar la estabilidad, legibilidad y facilidad de actualización del proyecto.
+El proceso para desarrollar Tennis-Hub fue más que solo escribir código. Se trató de meterse de lleno en una cadena completa, de DevOps y control de calidad. Esto aseguraría que cada nueva función se validara antes de que los usuarios finales la vieran. Esto es lo que hizo que el sistema, a pesar de venir de un proyecto antiguo, se convirtiera en una plataforma robusta, moderna y que se puede mantener. Cada elección, desde cómo organizar el repositorio hasta automatizar las implementaciones, siempre tuvo el objetivo de mejorar la estabilidad, legibilidad y facilidad de actualización del proyecto.
 
 1. Flujo de trabajo usando ramas y CI:
-El equipo eligió un flujo de trabajo inspirado en el desarrollo basado en trunk, usando ramificaciones cortas y super controladas. Cada cambio parte de la rama principal, trunk, y se trabaja en una rama separada.
-Una vez que la funcionalidad está lista se integra de vuelta en trunk. Allí, diversas herramientas automatizadas —incluidas SonarCloud, Codacy, y las pruebas de integración— comprueban la calidad estática del código, buscando posibles fallos lógicos, vulnerabilidades de seguridad y duplicación, ademas verifican el estilo del proyecto.
 
-Esta estrategia disminuye mucho la chance de meter problemillas críticos, porque las ramas no amontonan montones de cambios grandes y duran muy poco. Encima, trabajando poco a poco, las revisiones de código son más rápidas y ayudan a enfocar mejor la consistencia de la arquitectura.
+El equipo eligió un flujo de trabajo inspirado en el desarrollo basado en trunk, usando ramificaciones controladas. Cada cambio parte de la rama principal, trunk, y se trabaja en una rama separada, para implementar la nueva funcionalidad.
+Una vez que la funcionalidad está lista se integra de nuevo en trunk. Allí, diversas herramientas automatizadas (incluidas SonarCloud, Codacy, y las pruebas de integración) comprueban la calidad del código, buscando posibles fallos lógicos, vulnerabilidades de seguridad y duplicación.
 
-La revisión del código no es visto como un simple tramite, sino como un paso esencial para asegurar la coherencia, pillar problemas antes, y asegurar que el sistema siga un estilo común, aunque participe más gente en su desarrollo.
+Esta estrategia disminuye mucho la probabilidad de insertar problemas críticos, ya que las ramas no acumulan cambios grandes y duran poco.
+
+La revisión del código no es visto como un simple tramite, sino como un paso esencial para asegurar la coherencia, detectar problemas en fases tempranas, y asegurar que el sistema siga un estilo común, aunque participe más desarolladores en él.
 
 2. Automatización de pruebas y validación antes del despliegue:
-Las pruebas automáticas es ahora, un pilar fundamental en el flujo de trabajo. Se definieron tres niveles, ademas complementarios:
 
-  * Pruebas unitarias revisan la lógica de los métodos modelos y controladores aisladamente. Aseguran, eso sí, que la función base se mantenga sin cambios pese a futuras modificaciones.
+Las pruebas automáticas son, un pilar fundamental en el flujo de trabajo. Se definieron tres niveles, ademas complementarios:
 
-  * Pruebas funcionales con Selenium, simulan acciones reales del usuario en el navegador, para revisar formularios, rutas protegidas, navegación, autenticación y todas interacciones complejas. Gracias a estas pruebas, pudimos validar el comportamiento completo del sistema desde la visión del usuario final.
+  * Pruebas unitarias revisan la lógica de los métodos modelos y controladores aisladamente.
 
-  * Pruebas de carga con Locust. Permiten medir el comportamiento del sistema bajo escenarios de mucho tráfico, simulando usuarios simultáneos descargando datasets, navegando por páginas, o accediendo a funciones críticas como el login. Este tipo de prueba resultó, digamos, especialmente valiosa para encontrar problemas y optimizar consultas o endpoints con mucha concurrencia.
+  * Pruebas funcionales con Selenium, simulan acciones reales del usuario en el navegador, para revisar formularios, rutas protegidas, navegación, autenticación y todas interacciones complejas. Gracias a estas pruebas, se pudo validar el comportamiento completo del sistema desde la visión del usuario final.
 
-Este conjunto de pruebas hizo posible detectar problemas pronto y ayudó a garantizar la estabilidad de la aplicación antes de implementarla en entornos superiores. Además, ayudo a mantener una calidad constante, incluso con un aumento significativo de las funciones.
+  * Pruebas de carga con Locust. Permiten medir el comportamiento del sistema bajo escenarios de mucho tráfico, simulando usuarios simultáneos descargando datasets, navegando por páginas, o accediendo a funciones críticas como el login. Este tipo de prueba resultó valiosa para encontrar problemas y optimizar consultas o endpoints con mucha concurrencia.
 
-Ciclo de vida del proyecto administrado:
+Este conjunto de pruebas hizo posible detectar problemas pronto y ayudó a garantizar la estabilidad de la aplicación antes de implementarla en entornos superiores. Además, ayudó a mantener una calidad constante.
 
-  * El tablero Kanban, junto a las issues y los commits, fueron artefáctos esenciales pa' documentar el progreso del proyecto. El equipo mantuvo una disciplina rigurosa al escribir issues y commits, por eso, cualquier miembro podía entender la evolución del desarrollo, en segundos.
+3. Ciclo de vida del proyecto:
 
-Esta clara organización del flujo nos ayudó a detectar bloqueos, asignar mejor las tareas, y garantizar el registro correcto de cada paso. Cuando un cambio superaba las revisiones, se movía a la columna IN REVIEW, y después, a DONE.
+El tablero Kanban, junto a las issues y los commits, fueron esenciales para documentar el progreso del proyecto. El equipo mantuvo una disciplina rigurosa al escribir issues y commits, por eso, cualquier miembro puedo entender la evolución del desarrollo.
 
-Gracias a este enfoque, todo el equipo estaba al tanto del estado del proyecto al instante, ademas la trazabilidad se mantuvo por meses, simplificando auditorías, refactorizaciones y futuras mejoras.
+Esta clara organización del flujo nos ayudó a detectar bloqueos, asignar mejor las tareas, y garantizar el registro correcto de cada paso. Cuando surgía un nuevo cambio, se movía desde TO DO, pasando por IN PROGRESS, hasta la columna IN REVIEW, y después, a DONE. Gracias a este enfoque, todo el equipo estaba al tanto del estado del proyecto al instante.
 
-4. Diferenciación de entornos: Staging, Producción y Desarrollo:
+4. Diferenciación de entornos:
 
 Otro pilar important fue la distinta separación entre entornos:
 
@@ -137,22 +137,22 @@ Otro pilar important fue la distinta separación entre entornos:
   * Staging, es como un reflejo de producción, ahi se hacen las pruebas finales, en especial, las de carga y como se relacionan los módulos. Allí, se simulan situaciones reales, antes de aprobar una versión.
   * Producción: es el lugar donde se lanza la rama principal, solamente cuando se hace una versión estable nueva. Solo se publica cuando todas las revisiones se han superado.
 
-Esta táctica, reduce peligros y deja verificar cualquier cambio en lugares seguros antes de afectar a los usuarios de verdad. La plataforma Render ayudo esta coordinación, gestionando los servicios y las bases de datos relacionadas, eso, dejo un despliegue repetible, automático y muy controlado.
+Esta táctica, reduce peligros y deja verificar cualquier cambio en lugares seguros antes de afectar a los usuarios de verdad. La plataforma Render ayudó en esta coordinación, gestionando los servicios y las bases de datos relacionadas, dejando un despliegue automático controlado.
 
 5. Un proceso guiado por aprendizaje en equipo:
-Más alla del resultado final, el proyecto fue un completo entrenamiento, en la práctica profesional del desarrollo como; planificación, control de versiones, trabajo en grupo, depuración, documentación, automatización, y lanzamiento.
+
+Más allá del resultado final, el proyecto fue un completo entrenamiento, en la práctica profesional del desarrollo como; planificación, control de versiones, trabajo en grupo, depuración, documentación, automatización, y lanzamiento.
 
 El equipo se esforzó no solo para crear una app que funcionara, si no para hacerla de la manera más correcta, empleando buenas practicas, herramientas modernas y una metodología ya madura.
 
-Ese método ayudó a ganar expertise en cosas fundamentales, por ejemplo:
-  * Atajar fallos rápido usando integración continua,
-  * Emplear contenedores pa' uniformar ambientes,
+Ese método ayudó a ganar experiencia en cosas fundamentales, por ejemplo:
+  * Resolver fallos rápido usando integración continua,
+  * Emplear contenedores para desplegar la aplicación en diferentes entornos,
   * Código uniforme gracias a linters y reglas automaticas,
-  * Aplicar métricas de calidad con la mira puesta en mejorar siempre,
-  * Una documentación clara pensada pa' colaborar más adelante.
+  * Aplicar métricas de calidad con el fin de mejorar siempre,
+  * Una documentación clara pensada para ser de utilidad a las futuras personas que trabajen en el proyecto.
 
-El producto final es un sistema estable, expandible, todo ordenado; podemos seguir agregando funciones sin afectar la estructura central.
-Esta perspectiva del proceso revela como cada desicion, desde usar Docker hasta adoptar Conventional Commits, conformó un flujo ideado pa' obtener calidad, seguimiento y eficacia, plantando así una base fuerte donde seguir construyendo.
+Esta perspectiva del proceso revela como cada decisión, desde usar Docker hasta adoptar Conventional Commits, conformó un flujo ideado para obtener calidad, seguimiento y eficacia, plantando así una base fuerte donde seguir construyendo.
 
 ## Ejercicio de propuesta de cambio
 
@@ -163,10 +163,10 @@ El primer paso consiste en registrar la tarea en el tablero de gestión del proy
 Antes de empezar a implementar cualquier cambio en el código, es necesario crear una nueva rama en el repositorio. Esta rama siempre debe originarse desde la rama trunk. El nombre de la rama dependerá del tipo de modificación que se vaya a realizar: “feature-task/nombre-de-la-tarea” para funcionalidades nuevas o ampliaciones, y “bugfix/descripción-del-cambio” para resolver errores. Para crear la rama se ejecutan los siguientes comandos: git checkout trunk y git checkout -b nombre-de-la-rama. Una vez creada la rama, se actualiza el tablero moviendo la issue al estado IN PROGRESS, indicando así al resto del equipo que se ha comenzado a trabajar en dicha tarea.
 
 ### 3 Desarrollo de la tarea y subida inicial de cambios
-Con la rama creada, se procede al desarrollo de la tarea. Durante esta fase, es recomendable realizar commits periódicos, especialmente si se desea compartir los avances con otros miembros del equip. Para subir los cambios se ejecutan los comandos git add ., git commit -m "mensaje-del-commit" y git push. Es importante respetar el formato de Conventional Commits, lo cual facilita la comprensión del historial y permite automatizar procesos como el versionado semántico. El mensaje del commit deberá seguir la estructura “feat: descripción del cambio” para nuevas funcionalidades o “fix: descripción del cambio” para correcciones. El mensaje debe ser claro, breve y descriptivo.
+Con la rama creada, se procede al desarrollo de la tarea. Durante esta fase, es recomendable realizar commits periódicos, especialmente si se desea compartir los avances con otros miembros del equipo. Para subir los cambios se ejecutan los comandos git add ., git commit -m "mensaje-del-commit" y git push. Es importante respetar el formato de Conventional Commits, lo cual facilita la comprensión del historial y permite automatizar procesos como el versionado semántico. El mensaje del commit deberá seguir la estructura “feat: descripción del cambio” para nuevas funcionalidades o “fix: descripción del cambio” para correcciones. El mensaje debe ser claro, breve y descriptivo.
 
 ### 4 Ejecución de pruebas
-Una vez completada la implementación, se debe realizar un conjunto de pruebas que validen la calidad y el correcto funcionamiento de los cambios. Entre las pruebas contempladas se incluyen pruebas de interfaz utilizando Selenium, pruebas de carga con Locust y pruebas unitarias. Tras completar las pruebas, , es necesario subir estos cambios a la rama siguiendo los comandos anteriores. Si el commit contiene únicamente pruebas, el prefijo adecuado será “test”, en caso contrario será el descrito en el paso anterior, manteniendo el estándar de Conventional Commits.
+Una vez completada la implementación, se debe realizar un conjunto de pruebas que validen la calidad y el correcto funcionamiento de los cambios. Entre las pruebas contempladas se incluyen pruebas de interfaz utilizando Selenium, pruebas de carga con Locust y pruebas unitarias. Tras completar las pruebas, es necesario subir estos cambios a la rama siguiendo los comandos anteriores. Si el commit contiene únicamente pruebas, el prefijo adecuado será “test”, en caso contrario será el descrito en el paso anterior, manteniendo el estándar de Conventional Commits.
 
 ### 5 Integración de cambios en la rama trunk
 Cuando la tarea ha sido desarrollada y validada con las pruebas correspondientes, llega el momento de incorporar los cambios en la rama trunk del proyecto. El procedimiento consiste en ejecutar git checkout trunk, git merge nombre-de-la-rama y git push. Esto actualiza la rama trunk con el nuevo código. Luego, la tarea se mueve a la columna REVIEW del tablero, indicando que está lista para ser revisada por el equipo. Si los miembros consideran que los cambios son correctos, la tarea pasa a DONE. Si se requieren correcciones, se vuelve al paso 3 para aplicar los cambios necesarios, subirlos de nuevo y repetir el proceso de revisión. Para este paso, el equipo dispondrá del despliegue de la rama trunk en render, cuya finalidad es el desarrollo así como análisis en Sonar Cloud y Codacy del código como ayuda para revisar el código realizado.
@@ -174,6 +174,11 @@ Cuando la tarea ha sido desarrollada y validada con las pruebas correspondientes
 ### 6 Integración en rama main
 Por último, cuando el equipo de desarrollo considera oportuno generar una nueva release, se procede a integrar los cambios de la rama trunk en la rama main y a crear una nueva etiqueta de versión. Para ello, se ejecutan los siguientes comandos en este orden: git checkout main, git merge trunk, git push, git tag -a version, y finalmente git push origin version. La versión asignada debe seguir el esquema de versionado semántico, es decir, el formato MAJOR.MINOR.PATCH. En este sistema, MAJOR se incrementa cuando se realizan cambios que rompen la compatibilidad del proyecto, MINOR se utiliza para añadir nuevas funcionalidades que no afectan la compatibilidad y PATCH se incrementa cuando se realizan correcciones de errores o mejoras menores que no modifican el comportamiento general del sistema.
 
-
 ### Conclusiones y trabajo futuro
-Se enunciarán algunas conclusiones y se presentará un apartado sobre las mejoras que se proponen para el futuro (curso siguiente) y que no han sido desarrolladas en el sistema que se entrega
+El desarrollo de Tennis-Hub ha supuesto una transformación del sistema original UVLHUB, tanto a nivel funcional como visual. El proyecto ha permitido consolidar un entorno robusto, seguro y orientado a la experiencia del usuario, incorporando funcionalidades modernas como el carrito de datasets, el sistema de tendencias, la interacción mediante comentarios y la autenticación en dos pasos.
+
+Asimismo, el uso disciplinado de metodologías de desarrollo profesional (incluyendo integración continua, flujos trunk-based, pruebas automatizadas, control estricto de ramas y despliegue multi-entorno) ha permitido garantizar una evolución controlada del software. Esta combinación de refactorización técnica y mejora funcional deja como resultado una plataforma más mantenible, escalable y alineada con las necesidades reales de una comunidad de usuarios especializada.
+
+El proyecto también ha servido como experiencia formativa completa para el equipo, reforzando habilidades en DevOps, diseño de arquitectura, depuración, análisis de métricas de calidad, trabajo coordinado y documentación profesional.
+
+En resumen, Tennis-Hub no solo moderniza un sistema existente, sino que sienta unas bases sólidas para su crecimiento en futuras iteraciones, convirtiéndolo en un repositorio temático útil, modular, seguro y adaptable a nuevas funcionalidades.
