@@ -174,7 +174,10 @@ Cuando la tarea ha sido desarrollada y validada con las pruebas correspondientes
 ### 6 Integración en rama main
 Por último, cuando el equipo de desarrollo considera oportuno generar una nueva release, se procede a integrar los cambios de la rama trunk en la rama main y a crear una nueva etiqueta de versión. Para ello, se ejecutan los siguientes comandos en este orden: git checkout main, git merge trunk, git push, git tag -a version, y finalmente git push origin version. La versión asignada debe seguir el esquema de versionado semántico, es decir, el formato MAJOR.MINOR.PATCH. En este sistema, MAJOR se incrementa cuando se realizan cambios que rompen la compatibilidad del proyecto, MINOR se utiliza para añadir nuevas funcionalidades que no afectan la compatibilidad y PATCH se incrementa cuando se realizan correcciones de errores o mejoras menores que no modifican el comportamiento general del sistema.
 
-### Conclusiones y trabajo futuro
+## Conclusiones y trabajo futuro
+
+### Conclusiones
+
 El desarrollo de Tennis-Hub ha supuesto una transformación del sistema original UVLHUB, tanto a nivel funcional como visual. El proyecto ha permitido consolidar un entorno robusto, seguro y orientado a la experiencia del usuario, incorporando funcionalidades modernas como el carrito de datasets, el sistema de tendencias, la interacción mediante comentarios y la autenticación en dos pasos.
 
 Asimismo, el uso disciplinado de metodologías de desarrollo profesional (incluyendo integración continua, flujos trunk-based, pruebas automatizadas, control estricto de ramas y despliegue multi-entorno) ha permitido garantizar una evolución controlada del software. Esta combinación de refactorización técnica y mejora funcional deja como resultado una plataforma más mantenible, escalable y alineada con las necesidades reales de una comunidad de usuarios especializada.
@@ -182,3 +185,13 @@ Asimismo, el uso disciplinado de metodologías de desarrollo profesional (incluy
 El proyecto también ha servido como experiencia formativa completa para el equipo, reforzando habilidades en DevOps, diseño de arquitectura, depuración, análisis de métricas de calidad, trabajo coordinado y documentación profesional.
 
 En resumen, Tennis-Hub no solo moderniza un sistema existente, sino que sienta unas bases sólidas para su crecimiento en futuras iteraciones, convirtiéndolo en un repositorio temático útil, modular, seguro y adaptable a nuevas funcionalidades.
+
+### Trabajo futuro
+
+A pesar de los avances conseguidos, existen múltiples líneas de mejora que podrían desarrollarse en futuras versiones del proyecto:
+
+1. Mejora del sistema de roles: Añadir roles avanzados (moderadores, revisores, editores) para mejorar la gestión de la comunidad y el control de calidad.
+2. Internacionalización: Traducir la plataforma a varios idiomas para ampliar el público objetivo.
+3. Ampliación del ecosistema social: Incorporar nuevas dinámicas comunitarias como valoración por estrellas o sistema de "me gustas".
+4. Implementación de un sistema de notificaciones internas:  Aavisar a los usuarios sobre nuevas versiones de datasets.
+
