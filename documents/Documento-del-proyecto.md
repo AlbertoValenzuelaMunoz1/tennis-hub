@@ -4,13 +4,13 @@
 
 Miembro del equipo  | Horas | Commits | LoC | Test | Issues | Work Item| Dificultad
 ------------- | ------------- | ------------- | ------------- | ------------- | ------------- |  ------------- |  ------------- | 
-[Valenzuela Muñoz,Alberto](https://github.com/AlbertoValenzuelaMunoz1) | HH | Commit | 711 | ZZ | II | Implementación de workflows de Sonar Qube, implementación del work item de comentarios de dataset, implementación junto a mis compañeros del work item de fakenodo.| H/M/L |
-[Rivas Becerra, Mario](https://github.com/marrivbec) | HH | XX | YY | ZZ | II | Implementación de la vista "Trending Datasets" | H/M/L |
-[Roldán Pérez, Antonio](https://github.com/AntonioRolpe11) | HH | XX | YY | ZZ | II | Descripción breve | H/M/L |
-[Ramírez Morales, Juan](https://github.com/Juanramire) | HH | XX | YY | ZZ | II | Descripción breve | H/M/L |
-[Ferrer Álvarez, Ángel Manuel](https://github.com/angelmanuelferrer) | HH | XX | YY | ZZ | II | Descripción breve | H/M/L |¡
-[Ruiz Fernández, Javier](https://github.com/javruifer1) | HH | XX | YY | ZZ | II | Descripción breve | H/M/L |
-**TOTAL** | tHH  | tXX | tYY | tZZ | tII | Descripción breve | H (X)/M(Y)/L(Z) |
+[Valenzuela Muñoz,Alberto](https://github.com/AlbertoValenzuelaMunoz1) | 50 | Commit | 711 | ZZ | Implementación de workflows de Sonar Qube | Comentarios de Dataset, Fakenodo| H/M/L |
+[Rivas Becerra, Mario](https://github.com/marrivbec) | 50 | XX | YY | ZZ | II | Implementación de la vista "Trending Datasets" | H/M/L |
+[Roldán Pérez, Antonio](https://github.com/AntonioRolpe11) | 50 | XX | YY | ZZ | II | Descargar nuestro propio dataset | H/M/L |
+[Ramírez Morales, Juan](https://github.com/Juanramire) | 50 | XX | YY | ZZ | II | 2FA, Contador de descargas | H/M/L |
+[Ferrer Álvarez, Ángel Manuel](https://github.com/angelmanuelferrer) | HH | XX | YY | ZZ | II | Subir desde Github/Zip | H/M/L |¡
+[Ruiz Fernández, Javier](https://github.com/javruifer1) | 50 | XX | YY | ZZ | II | Implementar nuevos tipos de dataset | H/M/L |
+**TOTAL** | 300  | tXX | tYY | tZZ | tII | Descripción breve | H (X)/M(Y)/L(Z) |
 
 La tabla contiene la información de cada miembro del proyecto y el total de la siguiente forma: 
   * Horas: número de horas empleadas en el proyecto.
@@ -23,51 +23,45 @@ La tabla contiene la información de cada miembro del proyecto y el total de la 
 
 
 ## Resumen ejecutivo
-El proyecto desarrollado, denominado Tennis-Hub, no nace desde cero, sino que constituye una refactorización del sistema de código abierto conocido como UVLHUB. El objetivo principal de esta transformación ha sido migrar de un repositorio de datos genérico a una plataforma verticalizada y altamente especializada en la gestión, almacenamiento y distribución de datasets relacionados exclusivamente con el mundo del tenis. Esta reingeniería ha implicado no solo cambios estéticos, sino una reestructuración de la lógica de negocio para soportar nuevas funcionalidades críticas que enriquecen la interacción del usuario y robustecen la seguridad del entorno.
+El proyecto desarrollado, denominado Tennis-Hub, no nace desde cero, sino que constituye una refactorización del sistema de código abierto conocido como UVLHUB. El objetivo principal de esta transformación ha sido migrar de un repositorio de datos genérico a una plataforma especializada en la gestión, almacenamiento y distribución de datasets relacionados exclusivamente con el mundo del tenis. Esto ha implicado no solo cambios estéticos, sino una reestructuración de la lógica de negocio para soportar nuevas funcionalidades que enriquecen la interacción del usuario y aumentan la robustez de la seguridad del entorno.
 
-1. Evolución de la Identidad y Experiencia de Usuario (UX)
+1. Experiencia de Usuario (UX)
 El primer nivel de intervención se centró en la "Personalización y Refactorización Visual". El sistema original carecía de una identidad temática definida. Para Tennis-Hub, se ha implementado una nueva guía de estilo que alinea la paleta de colores, la tipografía y la disposición de los elementos (layout) con la estética deportiva del tenis.
 
-Sin embargo, la personalización trasciende lo meramente cosmético. Se ha realizado una labor de localización y adaptación semántica; todos los textos, mensajes de error y etiquetas de la interfaz han sido reescritos para utilizar la terminología propia del dominio deportivo y del análisis de datos. Esto reduce la fricción cognitiva del usuario, quien ahora navega por un entorno que le resulta familiar y coherente, mejorando significativamente la usabilidad general de la aplicación.
-
 2. Módulo de Transacciones y Gestión de Recursos (El Carrito)
-Una de las innovaciones funcionales más destacadas respecto al proyecto base es la implementación del Sistema de Carrito de Datasets. Inspirado en los patrones de diseño del comercio electrónico (e-commerce), esta funcionalidad cambia el paradigma de descarga. En lugar de obligar al usuario a realizar descargas unitarias y repetitivas, el sistema permite ahora la selección múltiple de recursos.
+Una de las innovaciones funcionales más destacadas respecto al proyecto base es la implementación del Sistema de Carrito de Datasets. Inspirado en los patrones de diseño del comercio electrónico (e-commerce). En lugar de obligar al usuario a realizar descargas unitarias y repetitivas, el sistema permite ahora la selección múltiple de recursos.
 
-Técnicamente, esto se gestiona mediante el almacenamiento en sesión (session storage) de las referencias a los datasets seleccionados. El usuario puede navegar por distintas categorías, añadir archivos a su "bolsa" virtual y, finalmente, proceder a una gestión unificada. Esto culmina en el módulo de Gestión de Descargas, que ha sido optimizado para manejar la entrega eficiente de estos archivos, permitiendo al investigador o aficionado obtener todo el material necesario en un solo flujo de trabajo, optimizando el tiempo y el ancho de banda.
+Esto se gestiona mediante el almacenamiento en sesión (session storage) de las referencias a los datasets seleccionados. El usuario puede navegar por distintas categorías, añadir archivos a su "carrito" virtual y, finalmente, proceder a una gestión unificada. Esto culmina en el módulo de Gestión de Descargas, que ha sido optimizado para manejar la entrega eficiente de estos archivos, permitiendo al investigador o aficionado obtener todo el material necesario en un solo flujo de trabajo, optimizando el tiempo y el ancho de banda.
 
-3. Dinamización Social y Métricas de Popularidad
-Para transformar un repositorio estático en una comunidad dinámica, se han integrado Módulos de Interacción. La característica central aquí es el sistema de comentarios. Se ha desarrollado un sistema CRUD (Create, Read, Update, Delete) que permite a los usuarios registrados iniciar hilos de discusión en cada dataset. Esto añade una capa de valor cualitativo a los datos: los usuarios pueden advertir sobre erratas en los archivos, sugerir mejoras o compartir análisis derivados, fomentando la inteligencia colectiva.
+3. Métricas de Popularidad
+Para transformar un repositorio estático en una comunidad dinámica, se han integrado Módulos de Interacción. La característica central aquí es el sistema de comentarios. Se ha desarrollado un sistema CRUD (Create, Read, Update, Delete) que permite a los usuarios registrados iniciar hilos de discusión en cada dataset. Esto añade una capa de valor cualitativo a los datos: los usuarios pueden advertir sobre erratas en los archivos, sugerir mejoras o compartir análisis derivados.
 
-Paralelamente, se ha introducido un motor de análisis de tendencias. El sistema ya no muestra los datos de forma plana; ahora incorpora contadores internos que registran eventos de visualización y descarga en tiempo real. Estos datos alimentan la sección de "Datasets de Moda" (Trending), un algoritmo de ordenamiento que destaca en la página principal aquellos recursos que están recibiendo mayor atención por parte de la comunidad. Esto no solo mejora la descubribilidad del contenido, sino que ofrece a los administradores una visión clara de qué tipo de información es la más demandada.
+Paralelamente, se ha introducido un motor de análisis de tendencias. El sistema incorpora contadores internos que registran eventos de visualización y descarga en tiempo real. Estos datos alimentan la sección de "Datasets de Moda" (Trending), un algoritmo de ordenamiento que destaca en la página principal aquellos recursos que están recibiendo mayor atención por parte de la comunidad. Esto no solo mejora la descubribilidad del contenido, sino que ofrece a los administradores una visión clara de qué tipo de información es la más demandada.
 
 4. Seguridad Avanzada: Doble Factor de Autenticación (2FA)
-Dada la importancia de proteger las cuentas de usuario y la integridad de los datos subidos, se ha elevado el estándar de seguridad mediante la integración de Doble Factor de Autenticación (2FA). Esta funcionalidad supone una barrera adicional crítica frente al compromiso de credenciales.
+Dada la importancia de proteger las cuentas de usuario y la integridad de los datos subidos, se ha elevado la seguridad mediante la integración de Doble Factor de Autenticación (2FA).
 
-El flujo implementado requiere que, tras la validación tradicional de usuario y contraseña, el sistema genere un token de un solo uso (OTP) mediante algoritmos criptográficos seguros. Este código es enviado automáticamente al correo electrónico del usuario a través de una integración con servicios SMTP. El acceso al sistema permanece bloqueado en una vista intermedia hasta que el usuario introduce el código correcto. Esta implementación asegura que, incluso si una contraseña es filtrada, el atacante no podrá acceder a la cuenta sin tener control simultáneo sobre el correo electrónico del propietario.
+El flujo implementado requiere que, tras la validación tradicional de usuario y contraseña, el sistema genere un token. El acceso al sistema permanece bloqueado en una vista intermedia hasta que el usuario introduce el código correcto. Esta implementación asegura que, incluso si una contraseña es filtrada, el atacante no podrá acceder a la cuenta sin tener control simultáneo sobre el correo electrónico del propietario.
 
 5. Infraestructura y Despliegue en la Nube
-Finalmente, la arquitectura de despliegue ha sido modernizada utilizando Render, una plataforma en la nube (PaaS) que garantiza alta disponibilidad y escalabilidad. Para profesionalizar el ciclo de vida del desarrollo de software (SDLC), se han establecido dos entornos completamente diferenciados:
+Finalmente, la arquitectura de despliegue ha sido modernizada utilizando Render, una plataforma en la nube (PaaS). Para el ciclo de vida del desarrollo de software, se han establecido dos entornos completamente diferenciados:
 
-*Entorno de Desarrollo: Un espacio volátil donde se despliegan las nuevas funcionalidades (features) para su integración y revisión inicial.
+* Entorno de Desarrollo: Un espacio volátil donde se despliegan las nuevas funcionalidades (features) para su integración y revisión inicial.
 
-*Entorno de Pruebas (Staging): Un espejo del entorno de producción donde se realizan las validaciones finales y pruebas de carga.
+* Entorno de Pruebas (Staging): Un espejo del entorno de producción donde se realizan las validaciones finales, pruebas de carga, además de la implementación de nuevas funcionalidades.
 
 Esta separación de entornos, cada uno con su propia instancia de base de datos, permite al equipo validar cambios, probar migraciones y ejecutar tests de regresión sin poner en riesgo la estabilidad del sistema ni la integridad de los datos visibles para los usuarios finales.
 
 ## Descripción del sistema
-Desde un punto de vista estratégico, el sistema busca democratizar el acceso a datos deportivos, permitiendo a analistas, entrenadores y aficionados compartir conjuntos de datos estructurados. La solución no solo almacena información, sino que fomenta la interacción mediante sistemas de comentarios y valoración, asegurando al mismo tiempo la integridad de las cuentas mediante protocolos de seguridad avanzados como la autenticación de doble factor (2FA).
-
 La arquitectura de Tennis-Hub sigue el patrón de diseño Modelo-Vista-Controlador (MVC), implementado a través del framework Flask. Esta decisión arquitectónica permite desacoplar la lógica de negocio de la interfaz de usuario, facilitando la mantenibilidad y escalabilidad del sistema.
 
 * Capa de Presentación (Vista/Templates): Desarrollada en HTML5 y CSS3, utiliza el motor de plantillas Jinja2 integrado en Flask. Esta capa es responsable de renderizar la información enviada por el servidor y capturar las interacciones del usuario. Se ha diseñado con un enfoque responsive para adaptarse a distintos dispositivos.
 
-apa de Lógica de Negocio (Controlador/Rutas): Gestionada por los controladores de Flask (routes.py o views.py). Aquí residen los algoritmos que procesan las peticiones HTTP (GET, POST), gestionan la lógica del carrito de compras, validan el 2FA y calculan las tendencias de los datasets.
+* Capa de Lógica de Negocio (Controlador/Rutas): Gestionada por los controladores de Flask (routes.py o views.py). Aquí residen los algoritmos que procesan las peticiones HTTP (GET, POST), gestionan la lógica del carrito de compras, validan el 2FA y calculan las tendencias de los datasets.
 
 * Capa de Datos (Modelo): Se utiliza SQLAlchemy como ORM (Object-Relational Mapper). Esto permite interactuar con la base de datos mediante clases de Python en lugar de escribir SQL crudo, abstrayendo la complejidad de las consultas. Los modelos principales incluyen entidades como User, Dataset, Comment y Order."
 
 El sistema interactúa con subsistemas críticos:
-
-* Sistema de Correo: Para el envío de códigos 2FA (posiblemente vía SMTP o librerías como Flask-Mail).
 * Sistema de Almacenamiento: Gestión de archivos estáticos donde se alojan los datasets físicos.
 * Render (PaaS): Plataforma que orquesta el despliegue, gestionando el servidor de aplicaciones (Gunicorn/uWSGI) y la conexión a la base de datos en la nube.
 
@@ -97,59 +91,68 @@ El proyecto parte de la base de UVLHUB, pero ha sufrido una transformación sust
   * Desarrollo de la interfaz flotante o página dedicada para visualizar los items seleccionados.
   * Implementación de la lógica de descarga masiva o checkout.
 
-* Métricas y 'Trending Topic':
+* Métricas y 'Trending Dataset':
   * Modificación del modelo de base de datos Dataset para incluir campos de contadores (view_count, download_count).
   * Creación de la lógica de ordenamiento para filtrar y mostrar los 'Datasets de Moda' en la landing page.
 
 * Feedback de Usuario:
-  * Desarrollo del sistema CRUD (Create, Read, Update, Delete) para comentarios asociados a cada dataset.
+  * Desarrollo del sistema para comentarios asociados a cada dataset.
   * Validación de permisos para asegurar que solo usuarios registrados puedan comentar.
 
-## Visión global del proceso de desarrollo (1.500 palabras aproximadamente)
-Debe dar una visión general del proceso que ha seguido enlazándolo con las herramientas que ha utilizado. Ponga un ejemplo de un cambio que se proponga al sistema y cómo abordaría todo el ciclo hasta tener ese cambio en producción. Los detalles de cómo hacer el cambio vendrán en el apartado correspondiente. 
+## Visión global del proceso de desarrollo 
+El proceso para desarrollar Tennis-Hub fue más que solo escribir código. Se trató de meterse de lleno en una cadena completa, súper profesionalizada, de DevOps y control de calidad. Esto aseguraría que cada nueva función se validará antes de que los usuarios finales la vieran. Es esta mirada general del asunto lo que hizo que el sistema, a pesar de venir de un proyecto viejo, se convirtiera en una plataforma robusta, moderna y que se puede mantener. Cada pequeña elección, desde cómo organizar el repositorio hasta automatizar las implementaciones, siempre tuvo el objetivo de mejorar la estabilidad, legibilidad y facilidad de actualización del proyecto.
 
-### Entorno de desarrollo
-El diseño e implementación del sistema "Tennis-Hub" se ha sustentado sobre un entorno de desarrollo robusto, moderno y estandarizado. La elección de las herramientas no ha sido arbitraria, sino que responde a la necesidad de crear un flujo de trabajo eficiente, colaborativo y, sobre todo, reproducible en diferentes máquinas y sistemas operativos. A continuación, se detalla la arquitectura de desarrollo, las tecnologías empleadas y el procedimiento estricto para el despliegue del sistema.
+1. Flujo de trabajo usando ramas y CI:
+El equipo eligió un flujo de trabajo inspirado en el desarrollo basado en trunk, usando ramificaciones cortas y super controladas. Cada cambio parte de la rama principal, trunk, y se trabaja en una rama separada.
+Una vez que la funcionalidad está lista se integra de vuelta en trunk. Allí, diversas herramientas automatizadas —incluidas SonarCloud, Codacy, y las pruebas de integración— comprueban la calidad estática del código, buscando posibles fallos lógicos, vulnerabilidades de seguridad y duplicación, ademas verifican el estilo del proyecto.
 
-1. Entorno de Desarrollo Integrado (IDE)
-Como núcleo central del trabajo diario se ha seleccionado Visual Studio Code (VS Code). El equipo ha aprovechado las características nativas de VS Code, específicamente su motor de IntelliSense, que proporciona autocompletado inteligente y documentación de funciones en tiempo real, acelerando drásticamente la escritura de código en Python y HTML.
+Esta estrategia disminuye mucho la chance de meter problemillas críticos, porque las ramas no amontonan montones de cambios grandes y duran muy poco. Encima, trabajando poco a poco, las revisiones de código son más rápidas y ayudan a enfocar mejor la consistencia de la arquitectura.
 
-Además, la integración de la terminal en la propia interfaz del editor ha permitido ejecutar comandos de servidor, gestión de bases de datos y control de versiones sin necesidad de cambiar de ventana, centralizando todas las tareas en un único espacio de trabajo. El uso de herramientas de depuración (debugging) integradas fue crucial para inspeccionar variables en tiempo de ejecución y solucionar errores lógicos complejos de manera eficiente.
+La revisión del código no es visto como un simple tramite, sino como un paso esencial para asegurar la coherencia, pillar problemas antes, y asegurar que el sistema siga un estilo común, aunque participe más gente en su desarrollo.
 
-2. Stack Tecnológico: Backend y Frontend
-La lógica del servidor se ha construido íntegramente sobre Python. Se optó por este lenguaje debido a su sintaxis limpia, su legibilidad y su extenso ecosistema de librerías orientadas al manejo de datos, lo cual es fundamental para un proyecto centrado en datasets de tenis.
+2. Automatización de pruebas y validación antes del despliegue:
+Las pruebas automáticas es ahora, un pilar fundamental en el flujo de trabajo. Se definieron tres niveles, ademas complementarios:
 
-Dentro del ecosistema Python, se ha implementado Flask como framework web principal. Otorga al equipo un control granular sobre los componentes del sistema, permitiendo instalar solo aquello que es estrictamente necesario. Esto ha resultado en una aplicación más ligera y optimizada.
+  * Pruebas unitarias revisan la lógica de los métodos modelos y controladores aisladamente. Aseguran, eso sí, que la función base se mantenga sin cambios pese a futuras modificaciones.
 
-Para la capa de presentación (Frontend), se ha mantenido una estructura clásica pero efectiva basada en HTML para la maquetación semántica y CSS para los estilos visuales, asegurando una interfaz intuitiva y adaptada a la nueva identidad de marca del proyecto. La comunicación entre el backend (Python) y el frontend (HTML) se realiza mediante el motor de plantillas Jinja2 (integrado en Flask), que permite inyectar datos dinámicos del servidor directamente en las vistas del usuario.
+  * Pruebas funcionales con Selenium, simulan acciones reales del usuario en el navegador, para revisar formularios, rutas protegidas, navegación, autenticación y todas interacciones complejas. Gracias a estas pruebas, pudimos validar el comportamiento completo del sistema desde la visión del usuario final.
 
-3. Gestión de Dependencias y Librerías
-Uno de los mayores desafíos en el desarrollo colaborativo es asegurar que todos los miembros del equipo utilicen exactamente las mismas versiones de las librerías para evitar conflictos de compatibilidad. Para mitigar este riesgo, la gestión de dependencias externas se ha centralizado estrictamente en el archivo requirements.txt.
+  * Pruebas de carga con Locust. Permiten medir el comportamiento del sistema bajo escenarios de mucho tráfico, simulando usuarios simultáneos descargando datasets, navegando por páginas, o accediendo a funciones críticas como el login. Este tipo de prueba resultó, digamos, especialmente valiosa para encontrar problemas y optimizar consultas o endpoints con mucha concurrencia.
 
-Este incluye todas las librerías de terceros necesarias para la ejecución del proyecto. Entre ellas destacan herramientas críticas como Locust, utilizada para realizar pruebas de carga y estrés, simulando el comportamiento de múltiples usuarios concurrentes para validar la robustez del servidor antes de su puesta en producción.
+Este conjunto de pruebas hizo posible detectar problemas pronto y ayudó a garantizar la estabilidad de la aplicación antes de implementarla en entornos superiores. Además, ayudo a mantener una calidad constante, incluso con un aumento significativo de las funciones.
 
-4. Infraestructura de Virtualización y Contenedores
-Se ha optado por una estrategia de infraestructura mediante Flask, Docker y Vagrant.
+Ciclo de vida del proyecto administrado:
 
-* Docker: El sistema, junto con todas sus dependencias, librerías y configuraciones, se empaqueta en un contenedor aislado. Esto asegura la portabilidad total: si el contenedor funciona en la máquina de un desarrollador, funcionará idénticamente en el servidor de producción.
+  * El tablero Kanban, junto a las issues y los commits, fueron artefáctos esenciales pa' documentar el progreso del proyecto. El equipo mantuvo una disciplina rigurosa al escribir issues y commits, por eso, cualquier miembro podía entender la evolución del desarrollo, en segundos.
 
-* Vagrant: Se ha utilizado para orquestar máquinas virtuales completas, proporcionando un entorno de desarrollo replicable que simula las condiciones del servidor final.
+Esta clara organización del flujo nos ayudó a detectar bloqueos, asignar mejor las tareas, y garantizar el registro correcto de cada paso. Cuando un cambio superaba las revisiones, se movía a la columna IN REVIEW, y después, a DONE.
 
-* Flask: Se ha utilizado para correr el sistema de manera local desde cualquier máquina.
+Gracias a este enfoque, todo el equipo estaba al tanto del estado del proyecto al instante, ademas la trazabilidad se mantuvo por meses, simplificando auditorías, refactorizaciones y futuras mejoras.
 
-5. Control de Versiones y Colaboración
-La integridad del código fuente y la colaboración entre los miembros del equipo se ha administrado mediante Git. Se estableció un flujo de trabajo basado en ramas (branches), permitiendo desarrollar nuevas funcionalidades de manera aislada sin comprometer la estabilidad de la rama principal (main). Las operaciones habituales de sincronización —git pull para obtener cambios, git commit para guardar progresos y git push para subir modificaciones al repositorio remoto.
+4. Diferenciación de entornos: Staging, Producción y Desarrollo:
 
-6. Guía Técnica de Despliegue e Instalación
-Para desplegar el sistema desde cero en un nuevo entorno, es imperativo seguir un protocolo secuencial que asegure la correcta configuración de todos los componentes.
+Otro pilar important fue la distinta separación entre entornos:
 
-* Preparación del Entorno: El primer paso requiere importar el código fuente del proyecto. Inmediatamente después, es obligatorio generar un entorno virtual de Python (venv) en la raíz del directorio. El uso de entornos virtuales es una práctica fundamental en Python, ya que aísla las dependencias del proyecto de las librerías instaladas globalmente en el sistema operativo, evitando conflictos de versiones entre diferentes proyectos.
+  * Desarrollo: despliegue automático de la rama trunk, esto se uso para validar la integración de cambios recientes. Le da la oportunidad al equipo de ver el resultado de cada merge, inmediatamente.
+  * Staging, es como un reflejo de producción, ahi se hacen las pruebas finales, en especial, las de carga y como se relacionan los módulos. Allí, se simulan situaciones reales, antes de aprobar una versión.
+  * Producción: es el lugar donde se lanza la rama principal, solamente cuando se hace una versión estable nueva. Solo se publica cuando todas las revisiones se han superado.
 
-* Instalación de Dependencias: Con el entorno virtual activado, se procede a la instalación de las librerías mediante el comando pip install -r requirements.txt. Este proceso descarga e instala automáticamente Flask, Locust, los conectores de base de datos y cualquier otra utilidad definida por el equipo.
+Esta táctica, reduce peligros y deja verificar cualquier cambio en lugares seguros antes de afectar a los usuarios de verdad. La plataforma Render ayudo esta coordinación, gestionando los servicios y las bases de datos relacionadas, eso, dejo un despliegue repetible, automático y muy controlado.
 
-* Configuración de Base de Datos: El sistema requiere la configuración de dos instancias de base de datos separadas: una para el entorno de Desarrollo (donde se persiste la información mientras se programa) y otra para el entorno de Pruebas (que se limpia y regenera cada vez que se ejecutan los tests automatizados). Esta separación es vital para evitar la corrupción de datos útiles durante las fases de testeo.
+5. Un proceso guiado por aprendizaje en equipo:
+Más alla del resultado final, el proyecto fue un completo entrenamiento, en la práctica profesional del desarrollo como; planificación, control de versiones, trabajo en grupo, depuración, documentación, automatización, y lanzamiento.
 
-* Seguridad y Variables de Entorno: Finalmente, se utiliza un archivo de configuración .env. Es responsabilidad del desarrollador asegurar que las credenciales (usuario, contraseña, host y puerto) definidas en este archivo coincidan estrictamente con la configuración real de las bases de datos creadas. Solo cuando estas variables están sincronizadas, el sistema puede arrancar correctamente.
+El equipo se esforzó no solo para crear una app que funcionara, si no para hacerla de la manera más correcta, empleando buenas practicas, herramientas modernas y una metodología ya madura.
+
+Ese método ayudó a ganar expertise en cosas fundamentales, por ejemplo:
+  * Atajar fallos rápido usando integración continua,
+  * Emplear contenedores pa' uniformar ambientes,
+  * Código uniforme gracias a linters y reglas automaticas,
+  * Aplicar métricas de calidad con la mira puesta en mejorar siempre,
+  * Una documentación clara pensada pa' colaborar más adelante.
+
+El producto final es un sistema estable, expandible, todo ordenado; podemos seguir agregando funciones sin afectar la estructura central.
+Esta perspectiva del proceso revela como cada desicion, desde usar Docker hasta adoptar Conventional Commits, conformó un flujo ideado pa' obtener calidad, seguimiento y eficacia, plantando así una base fuerte donde seguir construyendo.
 
 ## Ejercicio de propuesta de cambio
 

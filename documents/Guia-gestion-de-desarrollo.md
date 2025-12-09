@@ -45,7 +45,7 @@ El mensaje debe seguir el formato:
 
 ## 3. 📅 Gestión de Incidencias y Tareas (Kanban)
 
-Todas las tareas (incidencias, *features*) se gestionan a través de nuestro tablero Kanban en GitHub.
+Todas las tareas (incidencias, *features*) se gestionan a través de nuestro tablero Kanban en GitHub. Estas deben estar en español, y se le debe asignar independientemente una etiqueta correspondientemente a la importancia de la tarea (Must, Shoudl, Could, Won't).
 
 ### 3.1. Flujo de Tareas
 
