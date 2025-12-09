@@ -1,0 +1,13 @@
+[run]
+omit =
+    # Excluir archivos de tests que no son de la aplicación
+    */*_selenium.py
+    */locustfile.py
+    # Excluir directorios de entorno y archivos de configuración
+    */venv/*
+    */.venv/*
+    manage.py
+
+[report]
+ignore_errors = True
+show_missing = False
