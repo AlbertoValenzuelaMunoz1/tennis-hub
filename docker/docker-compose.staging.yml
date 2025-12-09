@@ -1,0 +1,132 @@
+services:
+
+  web:
+    container_name: web_app_container
+    image: uvlhub:staging
+    build:
+      context: ../
+      dockerfile: docker/images/Dockerfile.prod
+    pull_policy: build
+    env_file:
+      - ../.env
+    environment:
+      FLASK_ENV: staging
+      LOG_LEVEL: info
+      MARIADB_HOSTNAME: db
+      MARIADB_PORT: 3306
+      FEATURE_FLAGS_ENABLED: ${FEATURE_FLAGS_ENABLED:-false}
+      PERFORMANCE_MONITORING: ${PERFORMANCE_MONITORING:-enabled}
+    ports:
+      - "5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: always
+    volumes:
+      - ./entrypoints/production_entrypoint.sh:/app/entrypoint.sh
+      - ../scripts:/app/scripts
+      - ../migrations:/app/migrations
+      - uploads_staging:/app/uploads
+      - ../.moduleignore:/app/.moduleignore
+    command: [ "sh", "-c", "sh /app/entrypoint.sh" ]
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -fsS http://localhost:5000" ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - uvlhub_network
+
+  db:
+    container_name: mariadb_container
+    env_file:
+      - ../.env
+    image: mariadb:12.0.2
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data_staging:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD-SHELL", "mariadb-admin ping -h localhost -u$${MARIADB_USER} -p$${MARIADB_PASSWORD}" ]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - uvlhub_network
+
+  nginx:
+    container_name: nginx_web_server_container
+    image: nginx:1.29.1
+    volumes:
+      - ./nginx/nginx.prod.conf:/etc/nginx/nginx.conf
+      - ./nginx/html:/usr/share/nginx/html
+    ports:
+      - "80:80"
+    depends_on:
+      web:
+        condition: service_healthy
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - uvlhub_network
+
+  watchtower:
+    container_name: watchtower_container
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --cleanup --interval 120 web_app_container
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - uvlhub_network
+
+  locust:
+    container_name: locust_staging
+    build:
+      context: ../
+      dockerfile: docker/images/Dockerfile.locust
+    ports:
+      - "8089:8089"
+    environment:
+      - LOCUST_HOST=http://nginx
+    volumes:
+      - ../core:/app/core
+      - ../app:/app/app
+      - ../.env:/app/.env
+    depends_on:
+      web:
+        condition: service_healthy
+    networks:
+      - uvlhub_network
+    profiles:
+      - testing
+
+volumes:
+  db_data_staging:
+  uploads_staging:
+
+networks:
+  uvlhub_network:
