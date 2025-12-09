@@ -11,23 +11,26 @@ services:
       - ../.env
     environment:
       FLASK_ENV: staging
-      LOG_LEVEL: debug
+      LOG_LEVEL: info
       MARIADB_HOSTNAME: db
       MARIADB_PORT: 3306
+      FEATURE_FLAGS_ENABLED: ${FEATURE_FLAGS_ENABLED:-false}
+      PERFORMANCE_MONITORING: ${PERFORMANCE_MONITORING:-enabled}
     ports:
       - "5000:5000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     restart: always
     volumes:
       - ./entrypoints/production_entrypoint.sh:/app/entrypoint.sh
       - ../scripts:/app/scripts
       - ../migrations:/app/migrations
-      - ../uploads:/app/uploads
+      - uploads_staging:/app/uploads
       - ../.moduleignore:/app/.moduleignore
     command: [ "sh", "-c", "sh /app/entrypoint.sh" ]
     healthcheck:
-      test: [ "CMD-SHELL", "curl -fsS http://localhost:5000" ]
+      test: [ "CMD-SHELL", "curl -fsS http://localhost:5000/health || curl -fsS http://localhost:5000" ]
       interval: 30s
       timeout: 5s
       retries: 5
@@ -37,6 +40,8 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    networks:
+      - uvlhub_network
 
   db:
     container_name: mariadb_container
@@ -48,7 +53,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - db_data:/var/lib/mysql
+      - db_data_staging:/var/lib/mysql
     healthcheck:
       test: [ "CMD-SHELL", "mariadb-admin ping -h localhost -u$${MARIADB_USER} -p$${MARIADB_PASSWORD}" ]
       interval: 20s
@@ -60,6 +65,8 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    networks:
+      - uvlhub_network
 
   nginx:
     container_name: nginx_web_server_container
@@ -70,13 +77,16 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - web
+      web:
+        condition: service_healthy
     restart: always
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
+    networks:
+      - uvlhub_network
 
   watchtower:
     container_name: watchtower_container
@@ -90,6 +100,33 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    networks:
+      - uvlhub_network
+
+  locust:
+    container_name: locust_staging
+    build:
+      context: ../
+      dockerfile: docker/images/Dockerfile.locust
+    ports:
+      - "8089:8089"
+    environment:
+      - LOCUST_HOST=http://nginx
+    volumes:
+      - ../core:/app/core
+      - ../app:/app/app
+      - ../.env:/app/.env
+    depends_on:
+      web:
+        condition: service_healthy
+    networks:
+      - uvlhub_network
+    profiles:
+      - testing
 
 volumes:
-  db_data:
+  db_data_staging:
+  uploads_staging:
+
+networks:
+  uvlhub_network:
