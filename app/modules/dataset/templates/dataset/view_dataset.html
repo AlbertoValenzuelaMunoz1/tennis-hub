@@ -77,12 +77,6 @@
                         {% for author in dataset.ds_meta_data.authors %}
                         <p class="p-0 m-0">
                             {{ author.name }}
-                            {% if author.affiliation %}
-                            ({{ author.affiliation }})
-                            {% endif %}
-                            {% if author.orcid %}
-                            ({{ author.orcid }})
-                            {% endif %}
                         </p>
                         {% endfor %}
                     </div>
