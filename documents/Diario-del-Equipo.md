@@ -49,7 +49,13 @@
   ## ACTA 2025-06
 * Asistentes: Alberto Valenzuela Muñoz, Mario Rivas Becerra, Antonio Roldán Pérez, Javier Ruiz Fernández, Juan Ramírez Morales, Ángel Manuel Ferrer Álvarez
 * Acuerdos tomados:
-  * Acuerdo 2025-05-01: Cambios en la documentación del proyecto.
-  * Acuerdo 2025-05-02: Despliegue del proyecto en Docker y Vagrant.
-  * Acuerdo 2025-05-02: Eliminación de Lint.
+  * Acuerdo 2025-06-01: Cambios en la documentación del proyecto.
+  * Acuerdo 2025-06-02: Despliegue del proyecto en Docker y Vagrant.
+  * Acuerdo 2025-06-03: Decisión de la eliminación de Lint.
+
+  ## ACTA 2025-07
+* Asistentes: Alberto Valenzuela Muñoz, Mario Rivas Becerra, Antonio Roldán Pérez, Javier Ruiz Fernández, Juan Ramírez Morales, Ángel Manuel Ferrer Álvarez
+* Acuerdos tomados:
+  * Acuerdo 2025-07-01: Corrección del proyecto.
+  * Acuerdo 2025-07-02: Organización de tareas de correción a repartir entre los miembros del equipo.
 
