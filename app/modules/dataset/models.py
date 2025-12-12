@@ -70,6 +70,7 @@ class Comment(db.Model):
     dataset_id = db.Column(db.Integer, db.ForeignKey("data_set.id"), nullable=False)
     user_id=db.Column(db.Integer,db.ForeignKey("user.id"))
     user=db.relationship("User")
+    resolved=db.Column(db.Boolean,default=False,nullable=False)
 
     #
     children = db.relationship(
@@ -101,6 +102,8 @@ class DataSet(db.Model):
         cascade="all, delete-orphan",
         lazy=True
     )
+    
+
 
     def name(self):
         return self.ds_meta_data.title

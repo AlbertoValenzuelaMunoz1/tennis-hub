@@ -10,6 +10,7 @@ from zipfile import ZipFile
 
 import requests
 from flask import (
+    Response,
     abort,
     jsonify,
     make_response,
@@ -657,3 +658,28 @@ def add_comment(dataset_id):
     
 
     return redirect(f'/doi/{dataset.ds_meta_data.dataset_doi}')
+@dataset_bp.route("/datasets/<int:dataset_id>/comments/<int:comment_id>/toggle_resolved", methods=["POST"])
+@login_required
+def toggle_resolved(dataset_id,comment_id):
+    auth_service=AuthenticationService()
+    user=auth_service.get_authenticated_user()
+    dataset=dataset_service.get_or_404(dataset_id)
+    if dataset.user!=user:
+        abort(400, description="Para marcar como resuelto debe ser el autor del dataset.")
+    comment=comment_service.get_or_404(comment_id)
+    resolved=not comment.resolved
+    comment_service.update(id=comment_id,resolved=resolved)
+    return redirect(f'/doi/{dataset.ds_meta_data.dataset_doi}')
+@dataset_bp.route("/datasets/<int:dataset_id>/comments/<int:comment_id>", methods=["DELETE"])
+@login_required
+def delete_comment(dataset_id,comment_id):
+    auth_service=AuthenticationService()
+    user=auth_service.get_authenticated_user()
+    dataset=dataset_service.get_or_404(dataset_id)
+    comment=comment_service.get_or_404(comment_id)
+    if dataset.user!=user and comment.user!=user:
+        abort(400, description="Para eliminar un comentario debe ser el autor del dataset o autor del comentario.")
+    comment_service.delete(id=comment_id)
+    return Response(status=201)
+
+

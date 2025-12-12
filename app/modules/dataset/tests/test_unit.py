@@ -59,9 +59,9 @@ def test_create_comment(test_database_poblated):
     test_database_poblated.post(f'/datasets/{dataset.id}/comments',data={'content':'Hola','parent_id':None})
     response=test_database_poblated.get(f"/doi/{doi}/")
     s=BeautifulSoup(response.data.decode('utf-8'),"html.parser")
-    comment= list(s.find("div",class_="comments-container").div.p.stripped_strings)
-    assert comment[0]=='John:', "The comment creator is incorrect"
-    assert comment[1]=='Hola', "The comment content is incorrect"
+    comment= list(s.find("div",class_="comments-container").find("div",id=re.compile("comment-\d+")).stripped_strings)
+    assert comment[0].replace(":","")=='John', "The comment creator is incorrect"
+    assert comment[1].replace(": ","")=='Hola', "The comment content is incorrect"
 def test_no_content_comment(test_database_poblated):
     test_database_poblated.post(
         "/login", data=dict(email="user1@example.com", password="1234"), follow_redirects=True
@@ -90,11 +90,227 @@ def test_create_parent_comment(test_database_poblated):
     test_database_poblated.post(f'/datasets/{dataset.id}/comments',data={'content':'Adios','parent_id':id})
     response=test_database_poblated.get(f"/doi/{doi}/")
     s=BeautifulSoup(response.data.decode('utf-8'),"html.parser")
-    comment= s.find("div",id=re.compile(r'children-\d+'))
+    comment= s.find("div",id=re.compile(r'children-\d+')).find("div",id=re.compile("comment-\d+"))
     assert comment!=None, "The comment is not created as a response"
-    comment=list(comment.div.p.stripped_strings)
-    assert comment[0]=='John:', "The comment creator is incorrect"
-    assert comment[1]=='Adios', "The comment content is incorrect"
+    comment=list(comment.stripped_strings)
+    assert comment[0].replace(":","")=='John', "The comment creator is incorrect"
+    assert comment[1].replace(": ","")=='Adios', "The comment content is incorrect"
+
+def _create_comment_and_get_id(client, dataset_id, content="Comentario original"):
+    """Helper: crea un comentario y retorna su ID."""
+    client.post(f'/datasets/{dataset_id}/comments', data={'content': content, 'parent_id': None})
+    # Obtener el dataset para extraer el comentario recién creado
+    from app.modules.dataset.models import Comment
+    comment = Comment.query.filter_by(dataset_id=dataset_id, content=content).first()
+    return comment.id if comment else None
+
+def test_delete_comment_by_author(test_database_poblated):
+    """El autor del comentario puede eliminarlo."""
+    client = test_database_poblated
+    client.post(
+        "/login", data=dict(email="user1@example.com", password="1234"), follow_redirects=True
+    )
+    
+    doi = "10.1234/dataset1"
+    dataset = DSMetaDataService().filter_by_doi(doi).data_set
+    
+    comment_id = _create_comment_and_get_id(client, dataset.id, "Comentario a eliminar por autor")
+    assert comment_id is not None, "El comentario debería haberse creado"
+    
+    response = client.delete(f'/datasets/{dataset.id}/comments/{comment_id}')
+    
+    assert response.status_code == 201, "La eliminación debería ser exitosa"
+    
+    from app.modules.dataset.models import Comment
+    deleted_comment = Comment.query.get(comment_id)
+    assert deleted_comment is None, "El comentario debería haberse eliminado"
+
+def test_delete_comment_by_dataset_owner(test_database_poblated):
+    """El dueño del dataset puede eliminar cualquier comentario."""
+    client = test_database_poblated
+    
+    # User2 crea un comentario
+    client.post(
+        "/login", data=dict(email="user2@example.com", password="1234"), follow_redirects=True
+    )
+    
+    doi = "10.1234/dataset1"
+    dataset = DSMetaDataService().filter_by_doi(doi).data_set
+    
+    comment_id = _create_comment_and_get_id(client, dataset.id, "Comentario de user2")
+    assert comment_id is not None
+    
+    # Cerrar sesión de user2
+    client.get("/logout", follow_redirects=True)
+    
+    # User1 (dueño del dataset) elimina el comentario
+    client.post(
+        "/login", data=dict(email="user1@example.com", password="1234"), follow_redirects=True
+    )
+    
+    response = client.delete(f'/datasets/{dataset.id}/comments/{comment_id}')
+    
+    assert response.status_code == 201, "El dueño del dataset debería poder eliminar el comentario"
+    
+    from app.modules.dataset.models import Comment
+    deleted_comment = Comment.query.get(comment_id)
+    assert deleted_comment is None, "El comentario debería haberse eliminado"
+
+def test_delete_comment_unauthorized_user(test_database_poblated):
+    """Un usuario que no es autor del comentario ni dueño del dataset no puede eliminar."""
+    client = test_database_poblated
+    
+    # User1 (dueño del dataset) crea un comentario
+    client.post(
+        "/login", data=dict(email="user1@example.com", password="1234"), follow_redirects=True
+    )
+    
+    doi = "10.1234/dataset1"
+    dataset = DSMetaDataService().filter_by_doi(doi).data_set
+    
+    comment_id = _create_comment_and_get_id(client, dataset.id, "Comentario de user1")
+    
+    # Cerrar sesión de user1
+    client.get("/logout", follow_redirects=True)
+    
+    # User2 intenta eliminar el comentario (no es autor ni dueño del dataset)
+    client.post(
+        "/login", data=dict(email="user2@example.com", password="1234"), follow_redirects=True
+    )
+    
+    response = client.delete(f'/datasets/{dataset.id}/comments/{comment_id}')
+    
+    assert response.status_code == 400, "Debería rechazar la eliminación por usuario no autorizado"
+
+
+def test_delete_comment_no_login(test_database_poblated):
+    """Un usuario no autenticado no puede eliminar comentarios."""
+    client = test_database_poblated
+    
+    # Crear comentario logueado
+    client.post(
+        "/login", data=dict(email="user1@example.com", password="1234"), follow_redirects=True
+    )
+    
+    doi = "10.1234/dataset1"
+    dataset = DSMetaDataService().filter_by_doi(doi).data_set
+    comment_id = _create_comment_and_get_id(client, dataset.id, "Comentario sin login")
+    
+    # Cerrar sesión
+    client.get("/logout", follow_redirects=True)
+    
+    response = client.delete(f'/datasets/{dataset.id}/comments/{comment_id}')
+    
+    assert response.status_code == 302, "Debería redirigir al login"
+    redirect_url = response.headers.get('Location').split('?')[0]
+    assert redirect_url == '/login', "Debería redirigir a la página de login"
+
+
+def test_delete_comment_nonexistent(test_database_poblated):
+    """Eliminar un comentario inexistente devuelve 404."""
+    client = test_database_poblated
+    client.post(
+        "/login", data=dict(email="user1@example.com", password="1234"), follow_redirects=True
+    )
+    
+    doi = "10.1234/dataset1"
+    dataset = DSMetaDataService().filter_by_doi(doi).data_set
+    
+    response = client.delete(f'/datasets/{dataset.id}/comments/999999')
+    
+    assert response.status_code == 404, "Debería devolver 404 para comentario inexistente"
+
+def test_toggle_resolved_by_dataset_owner(test_database_poblated):
+    """El dueño del dataset puede marcar un comentario como resuelto."""
+    client = test_database_poblated
+    client.post(
+        "/login", data=dict(email="user1@example.com", password="1234"), follow_redirects=True
+    )
+    
+    doi = "10.1234/dataset1"
+    dataset = DSMetaDataService().filter_by_doi(doi).data_set
+    
+    comment_id = _create_comment_and_get_id(client, dataset.id, "Comentario para resolver")
+    assert comment_id is not None
+    
+    from app.modules.dataset.models import Comment
+    comment_before = Comment.query.get(comment_id)
+    initial_resolved = comment_before.resolved
+    
+    response = client.post(
+        f'/datasets/{dataset.id}/comments/{comment_id}/toggle_resolved',
+        follow_redirects=False
+    )
+    
+    assert response.status_code == 302, "Debería redirigir después de toggle"
+    
+    comment_after = Comment.query.get(comment_id)
+    assert comment_after.resolved != initial_resolved, "El estado resolved debería haberse invertido"
+
+def test_toggle_resolved_no_login(test_database_poblated):
+    """Un usuario no autenticado no puede marcar comentarios como resueltos."""
+    client = test_database_poblated
+    
+    # Crear comentario logueado
+    client.post(
+        "/login", data=dict(email="user1@example.com", password="1234"), follow_redirects=True
+    )
+    
+    doi = "10.1234/dataset1"
+    dataset = DSMetaDataService().filter_by_doi(doi).data_set
+    comment_id = _create_comment_and_get_id(client, dataset.id, "Comentario resolved sin login")
+    
+    # Cerrar sesión
+    client.get("/logout", follow_redirects=True)
+    
+    response = client.post(f'/datasets/{dataset.id}/comments/{comment_id}/toggle_resolved')
+    
+    assert response.status_code == 302, "Debería redirigir al login"
+    redirect_url = response.headers.get('Location').split('?')[0]
+    assert redirect_url == '/login', "Debería redirigir a la página de login"
+
+
+def test_toggle_resolved_nonexistent_comment(test_database_poblated):
+    """Marcar como resuelto un comentario inexistente devuelve 404."""
+    client = test_database_poblated
+    client.post(
+        "/login", data=dict(email="user1@example.com", password="1234"), follow_redirects=True
+    )
+    
+    doi = "10.1234/dataset1"
+    dataset = DSMetaDataService().filter_by_doi(doi).data_set
+    
+    response = client.post(f'/datasets/{dataset.id}/comments/999999/toggle_resolved')
+    
+    assert response.status_code == 404, "Debería devolver 404 para comentario inexistente"
+
+def test_toggle_resolved_visible_in_page(test_database_poblated):
+    """Verificar que el estado resuelto se refleja en la página del dataset."""
+    client = test_database_poblated
+    client.post(
+        "/login", data=dict(email="user1@example.com", password="1234"), follow_redirects=True
+    )
+    
+    doi = "10.1234/dataset1"
+    dataset = DSMetaDataService().filter_by_doi(doi).data_set
+    
+    comment_id = _create_comment_and_get_id(client, dataset.id, "Comentario visible resolved")
+    
+    # Marcar como resuelto
+    client.post(f'/datasets/{dataset.id}/comments/{comment_id}/toggle_resolved')
+    
+    # Verificar en la página
+    response = client.get(f"/doi/{doi}/")
+    html = response.data.decode('utf-8')
+    
+    assert "Resolved" in html or "✔" in html, "El comentario debería mostrarse como resuelto"
+
+
+
+
+
+
+
 
 dataset_service = DataSetService()
 
