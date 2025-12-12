@@ -200,7 +200,7 @@ def extract_supported_files_from_zip(zip_path: str, temp_folder: str):
                 skipped.append(f"{filename} skipped (error while extracting: {exc})")
                 continue
 
-            # Only validate CSV headers; UVL files are accepted as-is.
+            # Validate CSV headers before keeping the file.
             if filename.lower().endswith(".csv"):
                 validation_error = validate_csv_file(destination)
                 if validation_error:
