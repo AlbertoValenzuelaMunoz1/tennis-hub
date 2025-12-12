@@ -10,12 +10,27 @@ from selenium.webdriver.support import expected_conditions as EC
 from core.environment.host import get_host_for_selenium_testing
 from core.selenium.common import close_driver, initialize_driver
 
+USER1_EMAIL = os.getenv("SELENIUM_LOGIN_EMAIL", "user1@example.com")
+USER1_PASSWORD = os.getenv("SELENIUM_LOGIN_PASSWORD", "1234")
+
 
 def wait_for_page_to_load(driver, timeout=4):
     WebDriverWait(driver, timeout).until(
         lambda driver: driver.execute_script("return document.readyState")
         == "complete"
     )
+
+
+def get_user_id_by_email(email: str):
+    """Lookup the user id in the database so tests do not rely on seeded ids."""
+    from app import app
+    from app.modules.auth.models import User
+
+    with app.app_context():
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            raise RuntimeError(f"User with email {email} not found in the database")
+        return user.id
 
 
 def count_datasets(driver, host):
@@ -30,9 +45,11 @@ def count_datasets(driver, host):
         amount_datasets = 0
     return amount_datasets
 
-def remove_temp_folder(userId):
-    temp_folder = os.path.join(os.getenv("UPLOADS_DIR", "uploads"),"temp",str(userId))
+def remove_temp_folder(user_id):
+    temp_folder = os.path.join(os.getenv("UPLOADS_DIR", "uploads"), "temp", str(user_id))
     shutil.rmtree(temp_folder, ignore_errors=True)
+
+
 def _login_and_open_github_import(driver):
     host = get_host_for_selenium_testing()
     driver.get(f"{host}/login")
@@ -43,9 +60,9 @@ def _login_and_open_github_import(driver):
     )
     password_field = driver.find_element(By.NAME, "password")
     email_field.clear()
-    email_field.send_keys("user1@example.com")
+    email_field.send_keys(USER1_EMAIL)
     password_field.clear()
-    password_field.send_keys("1234")
+    password_field.send_keys(USER1_PASSWORD)
     password_field.send_keys(Keys.RETURN)
     time.sleep(4)
 
@@ -67,8 +84,8 @@ def test_upload_dataset():
         email_field = driver.find_element(By.NAME, "email")
         password_field = driver.find_element(By.NAME, "password")
 
-        email_field.send_keys("user1@example.com")
-        password_field.send_keys("1234")
+        email_field.send_keys(USER1_EMAIL)
+        password_field.send_keys(USER1_PASSWORD)
 
         # Send the form
         password_field.send_keys(Keys.RETURN)
@@ -184,9 +201,9 @@ def _login_user1(driver, host):
     """Log in as user1 to reuse across dataset upload scenarios."""
     driver.get(f"{host}/login")
     wait_for_page_to_load(driver)
-    driver.find_element(By.NAME, "email").send_keys("user1@example.com")
+    driver.find_element(By.NAME, "email").send_keys(USER1_EMAIL)
     password_field = driver.find_element(By.NAME, "password")
-    password_field.send_keys("1234")
+    password_field.send_keys(USER1_PASSWORD)
     password_field.send_keys(Keys.RETURN)
     WebDriverWait(driver, 10).until(
         EC.presence_of_element_located(
@@ -252,8 +269,10 @@ def test_upload_dataset_with_invalid_csv_headers_shows_error():
         )
         assert "missing columns" in error_box.text or "must include the columns" in error_box.text
     finally:
-        remove_temp_folder(10)
-        close_driver(driver)
+        try:
+            remove_temp_folder(get_user_id_by_email(USER1_EMAIL))
+        finally:
+            close_driver(driver)
 
 
 def test_upload_dataset_with_valid_csv_succeeds():
@@ -340,8 +359,8 @@ def test_comentarios():
 
     # Iniciar sesión
     driver.get(host+"/login")
-    driver.find_element(By.ID, "email").send_keys("user1@example.com")
-    driver.find_element(By.ID, "password").send_keys("1234")
+    driver.find_element(By.ID, "email").send_keys(USER1_EMAIL)
+    driver.find_element(By.ID, "password").send_keys(USER1_PASSWORD)
     driver.find_element(By.ID, "submit").click()
 
     # Volver al dataset
@@ -509,9 +528,9 @@ def test_testImportarBien():
         driver.set_window_size(602, 743)
         driver.get(host+"/login")
         driver.find_element(By.ID, "email").click()
-        driver.find_element(By.ID, "email").send_keys("user1@example.com")
+        driver.find_element(By.ID, "email").send_keys(USER1_EMAIL)
         driver.find_element(By.ID, "password").click()
-        driver.find_element(By.ID, "password").send_keys("1234")
+        driver.find_element(By.ID, "password").send_keys(USER1_PASSWORD)
         driver.find_element(By.ID, "submit").click()
         time.sleep(2)
         driver.get(host+"/dataset/import/github")
@@ -525,8 +544,10 @@ def test_testImportarBien():
         
         
     finally:
-        remove_temp_folder(10)
-        close_driver(driver)
+        try:
+            remove_temp_folder(get_user_id_by_email(USER1_EMAIL))
+        finally:
+            close_driver(driver)
 
 # Call the test function
 test_mark_comment_as_resolved()

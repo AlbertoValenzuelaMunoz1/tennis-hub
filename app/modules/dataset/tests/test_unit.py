@@ -576,11 +576,12 @@ def test_import_dataset_from_github_saves_supported_files(test_database_poblated
         data = response.get_json()
 
         assert response.status_code == 200
-        assert set(data["files"]) == {"valid.csv", "model.uvl"}
+        assert set(data["files"]) == {"valid.csv"}
         assert data["skipped"] == []
 
         for filename in data["files"]:
             assert os.path.isfile(os.path.join(temp_folder, filename))
+        assert not os.path.isfile(os.path.join(temp_folder, "model.uvl"))
     finally:
         shutil.rmtree(temp_folder, ignore_errors=True)
 
