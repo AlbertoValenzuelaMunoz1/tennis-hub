@@ -59,9 +59,9 @@ def test_create_comment(test_database_poblated):
     test_database_poblated.post(f'/datasets/{dataset.id}/comments',data={'content':'Hola','parent_id':None})
     response=test_database_poblated.get(f"/doi/{doi}/")
     s=BeautifulSoup(response.data.decode('utf-8'),"html.parser")
-    comment= list(s.find("div",class_="comments-container").div.p.stripped_strings)
-    assert comment[0]=='John:', "The comment creator is incorrect"
-    assert comment[1]=='Hola', "The comment content is incorrect"
+    comment= list(s.find("div",class_="comments-container").find("div",id=re.compile("comment-\d+")).stripped_strings)
+    assert comment[0].replace(":","")=='John', "The comment creator is incorrect"
+    assert comment[1].replace(": ","")=='Hola', "The comment content is incorrect"
 def test_no_content_comment(test_database_poblated):
     test_database_poblated.post(
         "/login", data=dict(email="user1@example.com", password="1234"), follow_redirects=True
@@ -90,11 +90,11 @@ def test_create_parent_comment(test_database_poblated):
     test_database_poblated.post(f'/datasets/{dataset.id}/comments',data={'content':'Adios','parent_id':id})
     response=test_database_poblated.get(f"/doi/{doi}/")
     s=BeautifulSoup(response.data.decode('utf-8'),"html.parser")
-    comment= s.find("div",id=re.compile(r'children-\d+'))
+    comment= s.find("div",id=re.compile(r'children-\d+')).find("div",id=re.compile("comment-\d+"))
     assert comment!=None, "The comment is not created as a response"
-    comment=list(comment.div.p.stripped_strings)
-    assert comment[0]=='John:', "The comment creator is incorrect"
-    assert comment[1]=='Adios', "The comment content is incorrect"
+    comment=list(comment.stripped_strings)
+    assert comment[0].replace(":","")=='John', "The comment creator is incorrect"
+    assert comment[1].replace(": ","")=='Adios', "The comment content is incorrect"
 
 dataset_service = DataSetService()
 

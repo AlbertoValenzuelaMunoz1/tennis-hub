@@ -272,34 +272,98 @@
     <h3>Comments</h3>
 
     {% macro render_comments(comments, level=0) %}
-        {% for comment in comments %}
-        <div class="comment" id="comment-{{comment.id}}" style="margin-left: {{ level * 20 }}px; border-left: {{ level > 0 and '2px solid #ccc' or 'none' }}; padding-left: 10px; margin-bottom: 10px;">
-            
-            <p>
-                <b>{{ comment.user.profile.name }}:</b> {{ comment.content }}
-                
-                {% if current_user.is_authenticated %}
-                <span style="margin-left: 10px; color: blue; cursor: pointer;" onclick="reply({{comment.id}}, '{{ comment.user.profile.name }}')">
-                    Reply
-                </span>
-                {% endif %}
+    {% for comment in comments %}
+    <div class="comment" id="comment-{{comment.id}}"
+         style="
+            margin-left: {{ level * 20 }}px;
+            border-left: {{ comment.resolved 
+                and '4px solid #4CAF50' 
+                or (level > 0 and '2px solid #ccc' or 'none') }};
+            padding-left: 10px;
+            margin-bottom: 10px;
+            background-color: {{ comment.resolved and '#e8f7ea' or 'transparent' }};
+            border-radius: 4px;
+         ">
 
-                {% if comment.children %}
-                <span id="toggle-{{ comment.id }}" style="margin-left: 10px; color: gray; cursor: pointer;" onclick="toggleChildren('children-{{ comment.id }}', 'toggle-{{ comment.id }}', {{ comment.children|length }})">
-                    [+] Show {{ comment.children|length }} replies
-                </span>
-                {% endif %}
-            </p>
+        <div style="margin-bottom: 10px;">
+            <b>{{ comment.user.profile.name }}</b>
 
-            {% if comment.children %}
-            <div id="children-{{ comment.id }}" style="display:none;">
-                {{ render_comments(comment.children, level + 1) }}
-            </div>
+            {% if comment.resolved %}
+                <span style="
+                    background-color: #4CAF50;
+                    color: white;
+                    padding: 2px 6px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                    margin-left: 6px;">
+                    ✔ Resolved
+                </span>
             {% endif %}
 
+            : {{ comment.content }}
+
+            {% if current_user.is_authenticated %}
+            <span style="margin-left: 10px; color: blue; cursor: pointer;"
+                  onclick="reply({{comment.id}}, '{{ comment.user.profile.name }}')">
+                Reply
+            </span>
+            {% endif %}
+
+            {% if comment.children %}
+            <span id="toggle-{{ comment.id }}"
+                  style="margin-left: 10px; color: gray; cursor: pointer;"
+                  onclick="toggleChildren('children-{{ comment.id }}',
+                                          'toggle-{{ comment.id }}',
+                                          {{ comment.children|length }})">
+                [+] Show {{ comment.children|length }} replies
+            </span>
+            {% endif %}
+
+            {% if current_user == dataset.user %}
+            
+            <form method="POST" action="{{ url_for('dataset.toggle_resolved',
+                         dataset_id=dataset.id,
+                         comment_id=comment.id) }}" 
+                         style="display: inline;">
+                <button
+                    style="
+                        padding: 4px 8px;
+                        background-color: {{ comment.resolved and '#4CAF50' or '#f0ad4e' }};
+                        color: white;
+                        border: none;
+                        border-radius: 4px;
+                        margin-left: 10px;
+                        cursor: pointer;">
+                    {{ comment.resolved and "Unresolve" or "Mark resolved" }}
+                </button>
+            </form>
+            {% endif %}
+            {% if current_user == dataset.user or current_user == comment.user %}
+            <button
+                onclick="deleteComment({{ comment.id }})"
+                style="
+                    padding: 4px 8px;
+                    background-color: #d9534f;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    margin-left: 5px;
+                    cursor: pointer;">
+                Delete
+            </button>
+            {% endif %}
+        </div> 
+
+        {% if comment.children %}
+        <div id="children-{{ comment.id }}" style="display:none;">
+            {{ render_comments(comment.children, level + 1) }}
         </div>
-        {% endfor %}
-    {% endmacro %}
+        {% endif %}
+    </div>
+    {% endfor %}
+{% endmacro %}
+
+
 
     {# Filtrar solo comentarios raíz #}
     {% set root_comments = dataset.comments | selectattr("parent_id", "equalto", None) | list %}
@@ -522,6 +586,15 @@ function toggleChildren(id){
     } else {
         div.style.display = "none";
     }
+}
+function deleteComment(commentId){
+    fetch("{{ url_for('dataset.delete_comment', dataset_id=dataset.id, comment_id=0) }}"
+          .replace("0", commentId),{method:"DELETE"}).then(res=>{
+            if(res.ok)
+            window.location.reload()
+          }
+
+        )
 }
 </script>
 
