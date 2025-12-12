@@ -95,7 +95,7 @@ SUPPORTED_EXTENSIONS = (".csv", ".uvl")
 
 
 def validate_uploaded_files(temp_folder, feature_models):
-    """Ensure every uploaded file exists and, if CSV, matches the expected columns."""
+    """Ensure every uploaded file exists and delegate CSV validation to validate_csv_file."""
     for feature_model in feature_models:
         file_name = feature_model.uvl_filename.data
 
@@ -110,39 +110,9 @@ def validate_uploaded_files(temp_folder, feature_models):
             return f"{file_name} not found in the temporary upload folder."
 
         if file_name.lower().endswith(".csv"):
-            try:
-                with open(file_path, "r", newline="", encoding="utf-8-sig") as csv_file:
-                    sample = csv_file.read(2048)
-                    csv_file.seek(0)
-                    try:
-                        dialect = csv.Sniffer().sniff(sample)
-                    except csv.Error:
-                        dialect = csv.excel
-                    reader = csv.reader(csv_file, dialect)
-                    headers = next(reader, None)
-            except Exception as exc:
-                logger.exception("Error reading uploaded CSV %s", file_name)
-                return f"Could not read {file_name}: {exc}"
-
-            if not headers:
-                return f"{file_name} is empty or missing a header row."
-
-            normalized_headers = [header.strip() for header in headers]
-
-            if normalized_headers != CSV_REQUIRED_COLUMNS:
-                missing = [col for col in CSV_REQUIRED_COLUMNS if col not in normalized_headers]
-                extras = [col for col in normalized_headers if col not in CSV_REQUIRED_COLUMNS]
-                details = []
-                if missing:
-                    details.append(f"missing columns: {', '.join(missing)}")
-                if extras:
-                    details.append(f"unexpected columns: {', '.join(extras)}")
-
-                detail_msg = "; ".join(details) if details else "columns are out of order"
-                return (
-                    f"{file_name} must include the columns "
-                    f"{', '.join(CSV_REQUIRED_COLUMNS)}; {detail_msg}."
-                )
+            validation_error = validate_csv_file(file_path)
+            if validation_error:
+                return f"{file_name}: {validation_error}"
 
     return None
 
@@ -681,5 +651,3 @@ def delete_comment(dataset_id,comment_id):
         abort(400, description="Para eliminar un comentario debe ser el autor del dataset o autor del comentario.")
     comment_service.delete(id=comment_id)
     return Response(status=201)
-
-
