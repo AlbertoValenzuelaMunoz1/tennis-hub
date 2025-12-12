@@ -91,7 +91,7 @@ CSV_REQUIRED_COLUMNS = [
 ]
 
 
-SUPPORTED_EXTENSIONS = (".csv", ".uvl")
+SUPPORTED_EXTENSIONS = (".csv")
 
 
 def validate_uploaded_files(temp_folder, feature_models):
