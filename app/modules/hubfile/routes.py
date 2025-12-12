@@ -76,7 +76,7 @@ def download_bulk_files():
     parent_directory_path = os.path.dirname(current_app.root_path)
 
     temp_dir = tempfile.mkdtemp()
-    zip_filename = f"uvlhub_cart_{uuid.uuid4().hex}.zip"
+    zip_filename = f"tennishub_cart_{uuid.uuid4().hex}.zip"
     zip_path = os.path.join(temp_dir, zip_filename)
 
     with ZipFile(zip_path, "w") as zipf:
@@ -121,7 +121,7 @@ def download_bulk_files():
             zip_path,
             mimetype="application/zip",
             as_attachment=True,
-            download_name="uvlhub-cart.zip",
+            download_name="tennishub-cart.zip",
         )
     )
     response.set_cookie("file_download_cookie", user_cookie)

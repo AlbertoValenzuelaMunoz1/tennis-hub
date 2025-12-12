@@ -395,7 +395,7 @@ var currentId = 0;
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `uvlhub-cart-${Date.now()}.zip`;
+            link.download = `tennishub-cart-${Date.now()}.zip`;
             document.body.appendChild(link);
             link.click();
             link.remove();
