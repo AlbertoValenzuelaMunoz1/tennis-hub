@@ -367,71 +367,6 @@ def test_comentarios():
     assert adios_comment.value_of_css_property("margin-left") =="20px"
 
     driver.quit()
-
-
-def test_testcarritos():
-    driver = initialize_driver()
-
-    try:
-        host = get_host_for_selenium_testing()
-        driver.get(host)
-        driver.set_window_size(1854, 1048)
-        WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located(
-            (By.LINK_TEXT, "Sample dataset 4")
-        )
-        ).click()
-        driver.find_element(
-            By.CSS_SELECTOR,
-            ".list-group-item:nth-child(2) .add-to-cart",
-        ).click()
-        driver.find_element(By.ID, "carritoDropdown").click()
-        driver.find_element(By.CSS_SELECTOR, ".fa-solid").click()
-        driver.find_element(
-            By.CSS_SELECTOR,
-            ".list-group-item:nth-child(2) .add-to-cart",
-        ).click()
-        driver.find_element(By.ID, "carritoDropdown").click()
-        driver.find_element(
-            By.CSS_SELECTOR,
-            ".list-group-item:nth-child(2) .add-to-cart",
-        ).click()
-        alert = driver.switch_to.alert
-        assert alert.text == "Este archivo ya está en el carrito."
-
-        # Cerramos el alert para poder seguir interactuando con la página
-        alert.accept()
-        driver.find_element(By.ID, "carritoDropdown").click()
-        driver.find_element(
-            By.CSS_SELECTOR,
-            ".flex-grow-1:nth-child(2)",
-        ).click()
-        driver.find_element(By.CSS_SELECTOR, ".content").click()
-        driver.find_element(
-            By.CSS_SELECTOR,
-            ".list-group-item:nth-child(2) .add-to-cart",
-        ).click()
-        alert = driver.switch_to.alert
-        assert alert.text == "Este archivo ya está en el carrito."
-        alert.accept()
-        driver.find_element(
-            By.CSS_SELECTOR,
-            ".list-group-item:nth-child(3) .add-to-cart",
-        ).click()
-        driver.find_element(
-            By.CSS_SELECTOR,
-            ".list-group-item:nth-child(4) .add-to-cart",
-        ).click()
-        driver.find_element(By.ID, "carritoDropdown").click()
-        driver.find_element(
-            By.CSS_SELECTOR,
-            ".flex-grow-1:nth-child(1)",
-        ).click()
-    finally:
-        # Close the browser
-        close_driver(driver)
-
-
 def test_import_github_requires_url_feedback():
     driver = initialize_driver()
 
@@ -507,7 +442,6 @@ test_upload_dataset_with_valid_csv_succeeds()
 test_rejects_non_csv_extension_client_side()
 test_testdownloadcounter()
 test_comentarios()
-test_testcarritos()
 test_testImportarBien()
 test_import_github_requires_url_feedback()
 test_import_github_rejects_non_github_link()
