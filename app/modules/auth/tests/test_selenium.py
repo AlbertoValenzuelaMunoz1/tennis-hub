@@ -108,6 +108,7 @@ def test_login_user_without_2fa_goes_straight_home():
         password_field.send_keys("1234")
         password_field.send_keys(Keys.RETURN)
 
+
         # Should not be redirected to the 2FA step
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located(
@@ -171,26 +172,14 @@ def test_enable_2fa_for_user2_success():
         password_field = driver.find_element(By.NAME, "password")
         password_field.send_keys("1234")
         password_field.send_keys(Keys.RETURN)
-
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located(
-                (
-                    By.XPATH,
-                    "//h1[contains(@class, 'h2 mb-3') and contains(., 'Latest datasets')]",
-                )
-            )
-        )
-
+        time.sleep(2)
         driver.get(f"{host}/2fa/enable")
         WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, "form button[type='submit']"))
+        EC.element_to_be_clickable((By.XPATH, "//button[text()='Setup 2FA']"))
         ).click()
 
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.ID, "token"))
-        )
-        driver.find_element(By.ID, "token").send_keys("123456")
-        driver.find_element(By.ID, "token").send_keys(Keys.RETURN)
+        driver.find_element(By.NAME, "token").send_keys("123456")
+        driver.find_element(By.NAME, "submit").send_keys(Keys.RETURN)
 
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located(
