@@ -2,6 +2,7 @@ import os
 import re
 import random
 
+from bs4 import BeautifulSoup
 from locust import HttpUser, TaskSet, between, task
 
 from core.environment.host import get_host_for_locust_testing
@@ -17,6 +18,16 @@ if not os.path.exists(VALID_CSV_PATH):
 
 DATASET_ID = os.getenv("LOCUST_DATASET_ID","4")  
 DATASET_DOI = os.getenv("LOCUST_DATASET_DOI","10.1234/dataset4")  
+COMMENT_DELETE_PATH = os.getenv(
+    "LOCUST_COMMENT_DELETE_PATH",
+    "/datasets/{dataset_id}/comments/{comment_id}/delete",
+)
+COMMENT_RESOLVE_PATH = os.getenv(
+    "LOCUST_COMMENT_RESOLVE_PATH",
+    "/datasets/{dataset_id}/comments/{comment_id}/resolve",
+)
+COMMENT_DELETE_METHOD = os.getenv("LOCUST_COMMENT_DELETE_METHOD", "POST").upper()
+COMMENT_RESOLVE_METHOD = os.getenv("LOCUST_COMMENT_RESOLVE_METHOD", "POST").upper()
 
 
 class DatasetBehavior(TaskSet):
@@ -146,6 +157,91 @@ class DatasetBehavior(TaskSet):
             name="dataset_post_comment",
             allow_redirects=False 
         )
+
+    def _build_comment_action_path(self, template, dataset_id, comment_id):
+        try:
+            return template.format(dataset_id=dataset_id, comment_id=comment_id)
+        except Exception:
+            return None
+
+    @staticmethod
+    def _extract_comment_id(html, content_marker):
+        soup = BeautifulSoup(html, "html.parser")
+        for comment_div in soup.select("div.comment[id^='comment-']"):
+            body_text = " ".join(comment_div.stripped_strings)
+            if content_marker in body_text:
+                match = re.search(r"comment-(\d+)", comment_div.get("id", ""))
+                if match:
+                    return match.group(1)
+        return None
+
+    def _create_comment_for_moderation(self):
+        dataset_id = self.dataset_id or DATASET_ID
+        doi = self.dataset_doi or DATASET_DOI
+        if not dataset_id:
+            return None, None
+
+        marker = f"Locust moderation {random.randint(1_000, 9_999)}"
+        resp = self.client.post(
+            f"/datasets/{dataset_id}/comments",
+            data={"content": marker},
+            name="dataset_post_comment_moderation",
+            allow_redirects=False,
+        )
+        if resp.status_code not in (200, 201, 302):
+            return dataset_id, None
+
+        view_url = resp.headers.get("Location")
+        if not view_url and doi:
+            view_url = f"/doi/{doi}/"
+
+        if not view_url:
+            return dataset_id, None
+
+        view_resp = self.client.get(view_url, name="dataset_comment_lookup")
+        if view_resp.status_code != 200:
+            return dataset_id, None
+
+        comment_id = self._extract_comment_id(view_resp.text, marker)
+        return dataset_id, comment_id
+
+    @task
+    def delete_comment(self):
+        dataset_id, comment_id = self._create_comment_for_moderation()
+        if not dataset_id or not comment_id:
+            return
+
+        path = self._build_comment_action_path(COMMENT_DELETE_PATH, dataset_id, comment_id)
+        if not path:
+            return
+
+        payload = {"dataset_id": dataset_id, "comment_id": comment_id}
+        if COMMENT_DELETE_METHOD == "DELETE":
+            resp = self.client.delete(path, json=payload, name="dataset_comment_delete")
+        else:
+            resp = self.client.post(path, json=payload, name="dataset_comment_delete")
+
+        if resp.status_code >= 400:
+            resp.failure(f"Failed to delete comment {comment_id}: {resp.status_code}")
+
+    @task
+    def resolve_comment(self):
+        dataset_id, comment_id = self._create_comment_for_moderation()
+        if not dataset_id or not comment_id:
+            return
+
+        path = self._build_comment_action_path(COMMENT_RESOLVE_PATH, dataset_id, comment_id)
+        if not path:
+            return
+
+        payload = {"dataset_id": dataset_id, "comment_id": comment_id, "resolved": True}
+        if COMMENT_RESOLVE_METHOD == "PATCH":
+            resp = self.client.patch(path, json=payload, name="dataset_comment_resolve")
+        else:
+            resp = self.client.post(path, json=payload, name="dataset_comment_resolve")
+
+        if resp.status_code >= 400:
+            resp.failure(f"Failed to resolve comment {comment_id}: {resp.status_code}")
 
 
 class DatasetUser(HttpUser):
