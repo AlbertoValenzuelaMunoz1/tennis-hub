@@ -25,18 +25,6 @@ def test_client(test_client):
 
     yield test_client
 
-
-# @pytest.fixture(scope="function")
-# def test_client_with_user_2fa(test_client, clean_database):
-#     """Fixture to create a user with 2FA enabled for testing."""
-#     with test_client.application.app_context():
-#         auth_service = AuthenticationService()
-#         user = auth_service.create_with_profile(name="2FA", surname="User", email="2fa_user@example.com", password="test1234")
-#         user.has_2fa_enabled = True
-#         user.otp_secret = pyotp.random_base32() # Ensure a fresh secret for each test
-#         auth_service.repository.session.commit()
-#     yield user, test_client
-
 def test_login_success(test_client):
     response = test_client.post(
         "/login", data=dict(email="test@example.com", password="test1234"), follow_redirects=True

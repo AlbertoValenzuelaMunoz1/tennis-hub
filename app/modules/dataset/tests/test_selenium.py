@@ -500,32 +500,6 @@ def test_testImportarBien():
         remove_temp_folder(10)
         close_driver(driver)
 
-
-""" def test_downloadstest():
-    driver = initialize_driver()
-    host = get_host_for_selenium_testing()
-    driver.get(host)
-    driver.set_window_size(1470, 919)
-    driver.find_element(By.LINK_TEXT, "Trending Datasets").click()
-    tbody = driver.find_element(By.ID, "most-downloaded")
-    filas = tbody.find_elements(By.TAG_NAME, "div")
-    assert len(filas) == 0, "❌ La tabla NO está vacía"
-    driver.find_element(By.LINK_TEXT, "Home").click()
-    driver.find_element(By.LINK_TEXT, "Download (1.21 KB)").click()
-    driver.find_element(By.LINK_TEXT, "Trending Datasets").click()
-    driver.find_element(By.LINK_TEXT, "Home").click()
-    driver.find_element(By.CSS_SELECTOR, ".card:nth-child(4) .btn:nth-child(2)").click()
-    driver.find_element(By.LINK_TEXT, "Trending Datasets").click()
-    driver.find_element(By.LINK_TEXT, "Home").click()
-    driver.find_element(By.LINK_TEXT, "Download (1.21 KB)").click()
-    driver.find_element(By.LINK_TEXT, "Trending Datasets").click()
-    driver.find_element(By.LINK_TEXT, "Home").click()
-    driver.find_element(By.LINK_TEXT, "Download (1.21 KB)").click()
-    driver.find_element(By.LINK_TEXT, "Trending Datasets").click()
-    driver.find_element(By.LINK_TEXT, "Home").click()
-    driver.find_element(By.CSS_SELECTOR, ".card:nth-child(3) .btn:nth-child(2)").click()
-    driver.find_element(By.LINK_TEXT, "Trending Datasets").click() """
-
 # Call the test function
 test_upload_dataset()
 test_upload_dataset_with_invalid_csv_headers_shows_error()
@@ -534,7 +508,6 @@ test_rejects_non_csv_extension_client_side()
 test_testdownloadcounter()
 test_comentarios()
 test_testcarritos()
-""" test_downloadstest()"""
 test_testImportarBien()
 test_import_github_requires_url_feedback()
 test_import_github_rejects_non_github_link()
