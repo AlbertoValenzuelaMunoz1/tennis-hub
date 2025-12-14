@@ -15,7 +15,7 @@ Tennis-hub
 ## Enlaces de interés:
 * [Repositorio de código](https://github.com/AlbertoValenzuelaMunoz1/tennis-hub) 
 * [Sistema desplegado](https://uvlhub-rbp6550.onrender.com/) 
-* [Sistema desplegado rama trunk (para desarrollo)](hhttps://tennis-hub-lrcg.onrender.com/) 
+* [Sistema desplegado rama trunk (para desarrollo)](https://tennis-hub-lrcg.onrender.com/) 
 * [Análisis del proyecto en Codacy](https://app.codacy.com/gh/AlbertoValenzuelaMunoz1/tennis-hub/dashboard) 
 * [Análisis de la rama main en Sonar Cloud](https://sonarcloud.io/project/overview?id=egc_tennis-hub) 
 * [Análisis de la rama trunk en Sonar Cloud](https://sonarcloud.io/project/overview?id=egc_tennis-hub-trunk) 

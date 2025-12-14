@@ -1,16 +1,14 @@
  ## Indicadores del proyecto
 
-(_debe dejar enlaces a evidencias que permitan de una forma sencilla analizar estos indicadores, con gráficas y/o con enlaces_)
-
 Miembro del equipo  | Horas | Commits | LoC | Test | Issues | Work Item| Dificultad
 ------------- | ------------- | ------------- | ------------- | ------------- | ------------- |  ------------- |  ------------- | 
-[Valenzuela Muñoz,Alberto](https://github.com/AlbertoValenzuelaMunoz1) | 50 | Commit | 711 | ZZ | Implementación de workflows de Sonar Qube | Comentarios de Dataset, Fakenodo| H/M/L |
-[Rivas Becerra, Mario](https://github.com/marrivbec) | 50 | XX | YY | ZZ | II | Implementación de la vista "Trending Datasets" | H/M/L |
-[Roldán Pérez, Antonio](https://github.com/AntonioRolpe11) | 50 | XX | YY | ZZ | II | Descargar nuestro propio dataset | H/M/L |
-[Ramírez Morales, Juan](https://github.com/Juanramire) | 50 | XX | YY | ZZ | II | 2FA, Contador de descargas | H/M/L |
-[Ferrer Álvarez, Ángel Manuel](https://github.com/angelmanuelferrer) | HH | XX | YY | ZZ | II | Subir desde Github/Zip | H/M/L |¡
-[Ruiz Fernández, Javier](https://github.com/javruifer1) | 50 | XX | YY | ZZ | II | Implementar nuevos tipos de dataset | H/M/L |
-**TOTAL** | 300  | tXX | tYY | tZZ | tII | Descripción breve | H (X)/M(Y)/L(Z) |
+[Valenzuela Muñoz,Alberto](https://github.com/AlbertoValenzuelaMunoz1) | 28 | 13 | 36345 | 13 | 6 | Implementación de workflows de Sonar Qube | Comentarios de Dataset, Fakenodo| H, L |
+[Rivas Becerra, Mario](https://github.com/marrivbec) | 50 | 13 | 1152 | 14 | 7 | Implementación de la vista "Trending Datasets" | M |
+[Roldán Pérez, Antonio](https://github.com/AntonioRolpe11) | 50 | 11 | 1122 | 12 | 6 | Descargar nuestro propio dataset | M |
+[Ramírez Morales, Juan](https://github.com/Juanramire) | 50 | 19 | 1091 | 15 | 8 | 2FA, Contador de descargas | H, L |
+[Ferrer Álvarez, Ángel Manuel](https://github.com/angelmanuelferrer) | 50 | 22 | 2022 | 12 | 6 | Subir desde Github/Zip | H |
+[Ruiz Fernández, Javier](https://github.com/javruifer1) | 50 | 10 | 636 | 11 | 7 | Implementar nuevos tipos de dataset | H |
+**TOTAL** | 300  | 103 | 42368 | 77 | 41 | Se han desarrolado todos los WI existosamente | H (4)/M(2)/L(2) |
 
 La tabla contiene la información de cada miembro del proyecto y el total de la siguiente forma: 
   * Horas: número de horas empleadas en el proyecto.
@@ -21,6 +19,9 @@ La tabla contiene la información de cada miembro del proyecto y el total de la 
   * Work Item: principal WI del que se ha hecho cargo el miembro del proyecto.
   * Dificultad: señalar el grado de dificultad en cada caso. Además, en los totales, poner cuántos se han hecho de cada grado de dificultad entre paréntesis. 
 
+* [Enlace a los contributors](https://github.com/AlbertoValenzuelaMunoz1/tennis-hub/graphs/contributors)
+
+* [Enlace al tablero de issues](https://github.com/users/AlbertoValenzuelaMunoz1/projects/3)
 
 ## Resumen ejecutivo
 El proyecto desarrollado, denominado Tennis-Hub, no nace desde cero, sino que constituye una refactorización del sistema de código abierto conocido como UVLHUB. El objetivo principal de esta transformación ha sido migrar de un repositorio de datos genérico a una plataforma especializada en la gestión, almacenamiento y distribución de datasets relacionados exclusivamente con el mundo del tenis. Esto ha implicado no solo cambios estéticos, sino una reestructuración de la lógica de negocio para soportar nuevas funcionalidades que enriquecen la interacción del usuario y aumentan la robustez de la seguridad del entorno.
