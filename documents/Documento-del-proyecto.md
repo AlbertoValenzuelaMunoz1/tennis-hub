@@ -3,12 +3,12 @@
 Miembro del equipo  | Horas | Commits | LoC | Test | Issues | Work Item| Dificultad
 ------------- | ------------- | ------------- | ------------- | ------------- | ------------- |  ------------- |  ------------- | 
 [Valenzuela Muñoz,Alberto](https://github.com/AlbertoValenzuelaMunoz1) | 50 | 28 | 36345 | 13 | 6 | Comentarios de Dataset, Fakenodo| H, L |
-[Rivas Becerra, Mario](https://github.com/marrivbec) | 50 | 13 | 1152 | 14 | 7 | Implementación de la vista "Trending Datasets" | M |
+[Rivas Becerra, Mario](https://github.com/marrivbec) | 50 | 13 | 1152 | 13 | 7 | Implementación de la vista "Trending Datasets" | M |
 [Roldán Pérez, Antonio](https://github.com/AntonioRolpe11) | 50 | 11 | 1122 | 12 | 6 | Descargar nuestro propio dataset | M |
-[Ramírez Morales, Juan](https://github.com/Juanramire) | 50 | 19 | 1091 | 15 | 8 | 2FA, Contador de descargas | H, L |
+[Ramírez Morales, Juan](https://github.com/Juanramire) | 50 | 20 | 1091 | 14 | 8 | 2FA, Contador de descargas | H, L |
 [Ferrer Álvarez, Ángel Manuel](https://github.com/angelmanuelferrer) | 50 | 22 | 2022 | 12 | 6 | Subir desde Github/Zip | H |
 [Ruiz Fernández, Javier](https://github.com/javruifer1) | 50 | 10 | 636 | 11 | 7 | Implementar nuevos tipos de dataset | H |
-**TOTAL** | 300  | 103 | 42368 | 77 | 41 | Se han desarrolado todos los WI existosamente | H (4)/M(2)/L(2) |
+**TOTAL** | 300  | 103 | 42368 | 75 | 41 | Se han desarrolado todos los WI existosamente | H (4)/M(2)/L(2) |
 
 La tabla contiene la información de cada miembro del proyecto y el total de la siguiente forma: 
   * Horas: número de horas empleadas en el proyecto.

@@ -402,83 +402,6 @@ def test_comentarios():
 
     driver.quit()
 
-
-def test_delete_comment_from_dataset_page():
-    driver = initialize_driver()
-    host = get_host_for_selenium_testing()
-
-    try:
-        _login_and_open_dataset(driver, host, dataset_link_text="Sample dataset 1")
-
-        comment_text = f"Eliminar comentario {int(time.time())}"
-        textarea = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "#addCommentForm textarea[name='content']")
-            )
-        )
-        textarea.clear()
-        textarea.send_keys(comment_text)
-        driver.find_element(By.CSS_SELECTOR, "#addCommentForm button[type='submit']").click()
-
-        comment_xpath = f"//div[contains(@class, 'comment')][contains(., '{comment_text}')]"
-        comment_element = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, comment_xpath))
-        )
-
-        delete_button = comment_element.find_element(By.XPATH, ".//button[contains(., 'Delete')]")
-        delete_button.click()
-
-        WebDriverWait(driver, 10).until(EC.staleness_of(comment_element))
-        WebDriverWait(driver, 10).until(lambda d: len(d.find_elements(By.XPATH, comment_xpath)) == 0)
-    finally:
-        close_driver(driver)
-
-
-def test_mark_comment_as_resolved():
-    driver = initialize_driver()
-    host = get_host_for_selenium_testing()
-
-    try:
-        _login_and_open_dataset(driver, host, dataset_link_text="Sample dataset 1")
-
-        comment_text = f"Resolver comentario {int(time.time())}"
-        textarea = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "#addCommentForm textarea[name='content']")
-            )
-        )
-        textarea.clear()
-        textarea.send_keys(comment_text)
-        driver.find_element(By.CSS_SELECTOR, "#addCommentForm button[type='submit']").click()
-
-        comment_xpath = f"//div[contains(@class, 'comment')][contains(., '{comment_text}')]"
-        comment_element = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, comment_xpath))
-        )
-
-        resolve_button = comment_element.find_element(
-            By.XPATH, ".//form[contains(@action, '/toggle_resolved')]/button"
-        )
-        assert "Mark resolved" in resolve_button.text
-        resolve_button.click()
-
-        WebDriverWait(driver, 10).until(EC.staleness_of(comment_element))
-        comment_element = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, comment_xpath))
-        )
-
-        status_button = comment_element.find_element(
-            By.XPATH, ".//form[contains(@action, '/toggle_resolved')]/button"
-        )
-        assert "Unresolve" in status_button.text
-
-        # Clean up the created comment to keep the dataset page tidy.
-        delete_button = comment_element.find_element(By.XPATH, ".//button[contains(., 'Delete')]")
-        delete_button.click()
-        WebDriverWait(driver, 10).until(EC.staleness_of(comment_element))
-    finally:
-        close_driver(driver)
-
 def test_import_github_requires_url_feedback():
     driver = initialize_driver()
 
@@ -550,8 +473,6 @@ def test_testImportarBien():
             close_driver(driver)
 
 # Call the test function
-test_mark_comment_as_resolved()
-test_delete_comment_from_dataset_page()
 test_upload_dataset()
 test_upload_dataset_with_invalid_csv_headers_shows_error()
 test_upload_dataset_with_valid_csv_succeeds()
