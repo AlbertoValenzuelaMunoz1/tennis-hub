@@ -2,7 +2,7 @@
 
 Miembro del equipo  | Horas | Commits | LoC | Test | Issues | Work Item| Dificultad
 ------------- | ------------- | ------------- | ------------- | ------------- | ------------- |  ------------- |  ------------- | 
-[Valenzuela Muñoz,Alberto](https://github.com/AlbertoValenzuelaMunoz1) | 28 | 13 | 36345 | 13 | 6 | Implementación de workflows de Sonar Qube | Comentarios de Dataset, Fakenodo| H, L |
+[Valenzuela Muñoz,Alberto](https://github.com/AlbertoValenzuelaMunoz1) | 50 | 28 | 36345 | 13 | 6 | Comentarios de Dataset, Fakenodo| H, L |
 [Rivas Becerra, Mario](https://github.com/marrivbec) | 50 | 13 | 1152 | 14 | 7 | Implementación de la vista "Trending Datasets" | M |
 [Roldán Pérez, Antonio](https://github.com/AntonioRolpe11) | 50 | 11 | 1122 | 12 | 6 | Descargar nuestro propio dataset | M |
 [Ramírez Morales, Juan](https://github.com/Juanramire) | 50 | 19 | 1091 | 15 | 8 | 2FA, Contador de descargas | H, L |
