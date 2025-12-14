@@ -40,6 +40,8 @@ from app.modules.dataset.services import (
 )
 from app.modules.zenodo.services import ZenodoService
 from app.modules.auth.services import AuthenticationService
+from app.modules.auth.models import User
+from app.modules.dataset.models import DataSet
 comment_service=CommentService()
 logger = logging.getLogger(__name__)
 
@@ -651,3 +653,13 @@ def delete_comment(dataset_id,comment_id):
         abort(400, description="Para eliminar un comentario debe ser el autor del dataset o autor del comentario.")
     comment_service.delete(id=comment_id)
     return Response(status=201)
+
+@dataset_bp.route('/user/<int:user_id>/datasets', methods=['GET'])
+def user_datasets(user_id):
+    user = User.query.get_or_404(user_id)
+    
+    all_datasets = DataSet.query.filter_by(user_id=user_id).all()
+    
+    synchronized_datasets = [ds for ds in all_datasets if ds.ds_meta_data.dataset_doi]
+    
+    return render_template('dataset/user_datasets.html', user=user, datasets=synchronized_datasets)

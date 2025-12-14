@@ -7,7 +7,6 @@ from locust import HttpUser, TaskSet, between, task
 
 from core.environment.host import get_host_for_locust_testing
 from core.locust.common import get_csrf_token
-
 LOGIN_EMAIL = os.getenv("LOCUST_EMAIL", "user1@example.com")
 LOGIN_PASSWORD = os.getenv("LOCUST_PASSWORD", "1234")
 
@@ -34,6 +33,17 @@ class DatasetBehavior(TaskSet):
     dataset_id = None
     dataset_doi = None
     csrf_token = None
+
+
+    def _extract_user_datasets_url(self, html):
+        soup = BeautifulSoup(html, "html.parser")
+
+        # Busca enlaces que vayan a /user/<id>/datasets
+        for a in soup.find_all("a", href=True):
+            if re.match(r"/user/\d+/datasets", a["href"]):
+                return a["href"]
+
+        return None
 
     def on_start(self):
         self.login()
@@ -216,11 +226,13 @@ class DatasetBehavior(TaskSet):
             return
 
         payload = {"dataset_id": dataset_id, "comment_id": comment_id}
-        request_method = self.client.delete if COMMENT_DELETE_METHOD == "DELETE" else self.client.post
+        if COMMENT_DELETE_METHOD == "DELETE":
+            resp = self.client.delete(path, json=payload, name="dataset_comment_delete")
+        else:
+            resp = self.client.post(path, json=payload, name="dataset_comment_delete")
 
-        with request_method(path, json=payload, name="dataset_comment_delete", catch_response=True) as resp:
-            if resp.status_code >= 400:
-                resp.failure(f"Failed to delete comment {comment_id}: {resp.status_code}")
+        if resp.status_code >= 400:
+            resp.failure(f"Failed to delete comment {comment_id}: {resp.status_code}")
 
     @task
     def resolve_comment(self):
@@ -233,11 +245,30 @@ class DatasetBehavior(TaskSet):
             return
 
         payload = {"dataset_id": dataset_id, "comment_id": comment_id, "resolved": True}
-        request_method = self.client.patch if COMMENT_RESOLVE_METHOD == "PATCH" else self.client.post
+        if COMMENT_RESOLVE_METHOD == "PATCH":
+            resp = self.client.patch(path, json=payload, name="dataset_comment_resolve")
+        else:
+            resp = self.client.post(path, json=payload, name="dataset_comment_resolve")
 
-        with request_method(path, json=payload, name="dataset_comment_resolve", catch_response=True) as resp:
-            if resp.status_code >= 400:
-                resp.failure(f"Failed to resolve comment {comment_id}: {resp.status_code}")
+        if resp.status_code >= 400:
+            resp.failure(f"Failed to resolve comment {comment_id}: {resp.status_code}")
+    @task(2)
+    def user_dataset(self):
+        doi = DATASET_DOI
+        if not doi:
+            return
+
+        resp = self.client.get(f"/doi/{doi}/", name="dataset_view")
+        if resp.status_code != 200:
+            return
+
+        user_url = self._extract_user_datasets_url(resp.text)
+        if not user_url:
+            return
+
+        self.client.get(user_url, name="user_datasets")
+
+
 
 
 class DatasetUser(HttpUser):

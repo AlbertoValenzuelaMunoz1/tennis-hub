@@ -427,7 +427,6 @@ def test_delete_comment_from_dataset_page():
 
         delete_button = comment_element.find_element(By.XPATH, ".//button[contains(., 'Delete')]")
         delete_button.click()
-
         WebDriverWait(driver, 10).until(EC.staleness_of(comment_element))
         WebDriverWait(driver, 10).until(lambda d: len(d.find_elements(By.XPATH, comment_xpath)) == 0)
     finally:
@@ -548,6 +547,32 @@ def test_testImportarBien():
             remove_temp_folder(get_user_id_by_email(USER1_EMAIL))
         finally:
             close_driver(driver)
+def test_user_datasets():
+    driver = initialize_driver()
+
+    try:
+        host=get_host_for_selenium_testing()
+        driver.get(host)
+        driver.set_window_size(2174, 1368)
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(
+                (By.LINK_TEXT, "Sample dataset 4")
+            )
+            ).click()
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(
+                (By.LINK_TEXT, "Doe, Jane")
+            )
+            ).click()
+        datasets=WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(
+                (By.CLASS_NAME,"card-body")
+            )
+            ).text
+        assert  "Sample dataset 2" in datasets
+        assert  "Sample dataset 4" in datasets
+    finally:
+        close_driver(driver)
 
 # Call the test function
 test_mark_comment_as_resolved()
@@ -561,3 +586,4 @@ test_comentarios()
 test_testImportarBien()
 test_import_github_requires_url_feedback()
 test_import_github_rejects_non_github_link()
+test_user_datasets()
