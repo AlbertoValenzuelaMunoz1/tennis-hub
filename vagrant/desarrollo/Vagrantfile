@@ -22,7 +22,7 @@ def load_env(file)
 end
 
 # Load .env file from the top level and get the loaded variables
-env_file_path = File.expand_path("../../.env", __FILE__)
+env_file_path = File.expand_path("../../../.env", __FILE__)
 puts "Loading .env file from: #{env_file_path}"
 loaded_env_vars = load_env(env_file_path)
 
@@ -42,7 +42,7 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 8089, host: 8089
 
   # Synced folders
-  config.vm.synced_folder "../", "/vagrant"
+  config.vm.synced_folder "../../", "/vagrant"
 
   # Use Ansible for provisioning
   config.vm.provision "ansible" do |ansible|

@@ -1,0 +1,86 @@
+---
+- hosts: all
+  become: true
+
+  vars:
+    common_environment:
+      FLASK_APP_NAME: "{{ flask_app_name }}"
+      FLASK_ENV: "{{ flask_env }}"
+      DOMAIN: "{{ domain }}"
+      MARIADB_HOSTNAME: "{{ mariadb_hostname }}"
+      MARIADB_PORT: "{{ mariadb_port }}"
+      MARIADB_DATABASE: "{{ mariadb_database }}"
+      MARIADB_TEST_DATABASE: "{{ mariadb_test_database }}"
+      MARIADB_USER: "{{ mariadb_user }}"
+      MARIADB_PASSWORD: "{{ mariadb_password }}"
+      MARIADB_ROOT_PASSWORD: "{{ mariadb_root_password }}"
+      WORKING_DIR: "{{ working_dir }}"
+
+  tasks:
+
+    - name: Add webhook to .moduleignore
+      shell: echo "webhook" > {{ working_dir }}.moduleignore
+      args:
+        executable: /bin/bash
+      environment: "{{ common_environment }}"
+
+    - name: Run Flask migrations
+      shell: |
+        source {{ working_dir }}vagrant_venv/bin/activate
+        cd {{ working_dir }}
+
+        # Check if database is empty
+        TABLE_COUNT=$(mariadb -u $MARIADB_USER -p$MARIADB_PASSWORD -h $MARIADB_HOSTNAME -P $MARIADB_PORT -D $MARIADB_DATABASE -sse \
+          "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$MARIADB_DATABASE';")
+
+        if [ "$TABLE_COUNT" -eq 0 ]; then
+            echo "Empty database, migrating..."
+            flask db upgrade
+        else
+            echo "Database already initialized, updating migrations..."
+            CURRENT_REVISION=$(mariadb -u $MARIADB_USER -p$MARIADB_PASSWORD -h $MARIADB_HOSTNAME -P $MARIADB_PORT -D $MARIADB_DATABASE -sse \
+              "SELECT version_num FROM alembic_version LIMIT 1;")
+            if [ -z "$CURRENT_REVISION" ]; then
+                flask db stamp head
+            fi
+            flask db upgrade
+        fi
+      args:
+        executable: /bin/bash
+      environment: "{{ common_environment }}"
+
+    - name: Create Gunicorn systemd service
+      copy:
+        dest: /etc/systemd/system/gunicorn.service
+        content: |
+          [Unit]
+          Description=Gunicorn instance to serve Flask app
+          After=network.target mariadb.service
+
+          [Service]
+          User=vagrant
+          Group=vagrant
+          WorkingDirectory={{ working_dir }}
+          Environment="FLASK_APP_NAME={{ flask_app_name }}"
+          Environment="FLASK_ENV={{ flask_env }}"
+          Environment="MARIADB_HOSTNAME={{ mariadb_hostname }}"
+          Environment="MARIADB_PORT={{ mariadb_port }}"
+          Environment="MARIADB_DATABASE={{ mariadb_database }}"
+          Environment="MARIADB_USER={{ mariadb_user }}"
+          Environment="MARIADB_PASSWORD={{ mariadb_password }}"
+          ExecStart={{ working_dir }}vagrant_venv/bin/gunicorn --workers 3 --bind 0.0.0.0:5000 app:app --timeout 3600 --log-level info
+
+          [Install]
+          WantedBy=multi-user.target
+      become: true
+
+    - name: Reload systemd
+      shell: systemctl daemon-reload
+      become: true
+
+    - name: Enable and start Gunicorn service
+      systemd:
+        name: gunicorn
+        enabled: true
+        state: started
+      become: true
