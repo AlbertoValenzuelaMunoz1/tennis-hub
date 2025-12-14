@@ -216,13 +216,11 @@ class DatasetBehavior(TaskSet):
             return
 
         payload = {"dataset_id": dataset_id, "comment_id": comment_id}
-        if COMMENT_DELETE_METHOD == "DELETE":
-            resp = self.client.delete(path, json=payload, name="dataset_comment_delete")
-        else:
-            resp = self.client.post(path, json=payload, name="dataset_comment_delete")
+        request_method = self.client.delete if COMMENT_DELETE_METHOD == "DELETE" else self.client.post
 
-        if resp.status_code >= 400:
-            resp.failure(f"Failed to delete comment {comment_id}: {resp.status_code}")
+        with request_method(path, json=payload, name="dataset_comment_delete", catch_response=True) as resp:
+            if resp.status_code >= 400:
+                resp.failure(f"Failed to delete comment {comment_id}: {resp.status_code}")
 
     @task
     def resolve_comment(self):
@@ -235,13 +233,11 @@ class DatasetBehavior(TaskSet):
             return
 
         payload = {"dataset_id": dataset_id, "comment_id": comment_id, "resolved": True}
-        if COMMENT_RESOLVE_METHOD == "PATCH":
-            resp = self.client.patch(path, json=payload, name="dataset_comment_resolve")
-        else:
-            resp = self.client.post(path, json=payload, name="dataset_comment_resolve")
+        request_method = self.client.patch if COMMENT_RESOLVE_METHOD == "PATCH" else self.client.post
 
-        if resp.status_code >= 400:
-            resp.failure(f"Failed to resolve comment {comment_id}: {resp.status_code}")
+        with request_method(path, json=payload, name="dataset_comment_resolve", catch_response=True) as resp:
+            if resp.status_code >= 400:
+                resp.failure(f"Failed to resolve comment {comment_id}: {resp.status_code}")
 
 
 class DatasetUser(HttpUser):
