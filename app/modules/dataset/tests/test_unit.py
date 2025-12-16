@@ -678,3 +678,25 @@ def test_validate_uploaded_files_requires_supported_extension():
 
         assert error is not None
         assert "must be one of" in error
+def test_correct_dataset_list(test_database_poblated):
+
+
+    user=User.query.filter_by(email="user1@example.com").first()
+
+
+    response=test_database_poblated.get(f'/user/{user.id}/datasets').data.decode('utf-8')
+
+
+    assert 'Sample dataset 1' in response
+
+
+def test_code_404_user_not_exists(test_database_poblated):
+
+
+    user=User.query.filter_by(email="user1@example.com").first()
+
+
+    response=test_database_poblated.get('/user/100000/datasets')
+
+
+    assert response.status_code==404
