@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 from zipfile import ZipFile
 
 import requests
+from app.modules.auth.models import User
 from flask import (
     Response,
     abort,
@@ -26,7 +27,7 @@ from werkzeug.utils import secure_filename
 
 from app.modules.dataset import dataset_bp
 from app.modules.dataset.forms import DataSetForm
-from app.modules.dataset.models import DSDownloadRecord,Comment
+from app.modules.dataset.models import DSDownloadRecord,Comment, DataSet
 from app.modules.dataset.models import DSDownloadRecord
 from app import db
 from app.modules.dataset.services import (
@@ -651,3 +652,27 @@ def delete_comment(dataset_id,comment_id):
         abort(400, description="Para eliminar un comentario debe ser el autor del dataset o autor del comentario.")
     comment_service.delete(id=comment_id)
     return Response(status=201)
+
+@dataset_bp.route('/user/<int:user_id>/datasets', methods=['GET'])
+def user_datasets(user_id):
+
+
+    user = User.query.get_or_404(user_id)
+
+
+    
+
+
+    all_datasets = DataSet.query.filter_by(user_id=user_id).all()
+
+
+    
+
+
+    synchronized_datasets = [ds for ds in all_datasets if ds.ds_meta_data.dataset_doi]
+
+
+    
+
+
+    return render_template('dataset/user_datasets.html', user=user, datasets=synchronized_datasets)
