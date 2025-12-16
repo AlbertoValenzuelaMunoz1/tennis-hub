@@ -471,6 +471,84 @@ def test_testImportarBien():
             remove_temp_folder(get_user_id_by_email(USER1_EMAIL))
         finally:
             close_driver(driver)
+def test_user_datasets():
+
+
+
+    driver = initialize_driver()
+
+
+
+
+
+    try:
+
+
+        host=get_host_for_selenium_testing()
+
+
+        driver.get(host)
+
+
+        driver.set_window_size(2174, 1368)
+
+
+        WebDriverWait(driver, 10).until(
+
+
+            EC.presence_of_element_located(
+
+
+                (By.LINK_TEXT, "Sample dataset 4")
+
+
+            )
+
+
+            ).click()
+
+
+        WebDriverWait(driver, 10).until(
+
+
+            EC.presence_of_element_located(
+
+
+                (By.LINK_TEXT, "Doe, Jane")
+
+
+            )
+
+
+            ).click()
+
+
+        datasets=WebDriverWait(driver, 10).until(
+
+
+            EC.presence_of_element_located(
+
+
+                (By.CLASS_NAME,"card-body")
+
+
+            )
+
+
+            ).text
+
+
+        assert  "Sample dataset 2" in datasets
+
+
+        assert  "Sample dataset 4" in datasets
+
+
+    finally:
+
+
+        close_driver(driver)
+
 
 # Call the test function
 test_upload_dataset()
@@ -482,3 +560,4 @@ test_comentarios()
 test_testImportarBien()
 test_import_github_requires_url_feedback()
 test_import_github_rejects_non_github_link()
+test_user_datasets()
