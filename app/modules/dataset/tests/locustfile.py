@@ -35,6 +35,29 @@ class DatasetBehavior(TaskSet):
     dataset_doi = None
     csrf_token = None
 
+
+def _extract_user_datasets_url(self, html):
+
+
+    soup = BeautifulSoup(html, "html.parser")
+
+
+
+
+
+    # Busca enlaces que vayan a /user/<id>/datasets
+
+
+    for a in soup.find_all("a", href=True):
+
+
+        if re.match(r"/user/\d+/datasets", a["href"]):
+
+
+            return a["href"]
+
+        return None
+
     def on_start(self):
         self.login()
         self.pick_dataset()
@@ -238,6 +261,34 @@ class DatasetBehavior(TaskSet):
         with request_method(path, json=payload, name="dataset_comment_resolve", catch_response=True) as resp:
             if resp.status_code >= 400:
                 resp.failure(f"Failed to resolve comment {comment_id}: {resp.status_code}")
+
+    @task(2)
+    def user_dataset(self):
+
+        doi = DATASET_DOI
+
+        if not doi:
+
+            return
+
+        resp = self.client.get(f"/doi/{doi}/", name="dataset_view")
+
+
+        if resp.status_code != 200:
+
+
+            return
+
+        user_url = self._extract_user_datasets_url(resp.text)
+
+
+        if not user_url:
+
+
+            return
+
+
+        self.client.get(user_url, name="user_datasets")
 
 
 class DatasetUser(HttpUser):
