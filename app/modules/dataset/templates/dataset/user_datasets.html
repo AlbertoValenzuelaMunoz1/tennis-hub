@@ -1,0 +1,173 @@
+
+{% extends "base_template.html" %}
+
+
+
+
+
+{% block title %}{{ user.profile.surname }}, {{ user.profile.name }}'s datasets{% endblock %}
+
+
+
+
+
+{% block content %}
+
+
+
+
+
+    <h1 class="h3 mb-3">{{ user.profile.surname }}, {{ user.profile.name }}'s datasets</h1>
+
+
+
+
+
+    {% if datasets %}
+
+
+        <div class="col-12">
+
+
+            <div class="card">
+
+
+
+
+
+                <div class="card-body">
+
+
+                    <table class="table">
+
+
+                        <thead>
+
+
+                        <tr>
+
+
+                            <th>Title</th>
+
+
+                            <th>Description</th>
+
+
+                            <th>Publication type</th>
+
+
+                        </tr>
+
+
+                        </thead>
+
+
+                        <tbody>
+
+
+                        {% for dataset in datasets %}
+
+
+                            <tr>
+
+
+                                <td>
+
+
+                                    <a href="{{ dataset.get_uvlhub_doi() }}">
+
+
+                                        {{ dataset.ds_meta_data.title }}
+
+
+                                    </a>
+
+
+                                </td>
+
+
+                                <td>{{ dataset.ds_meta_data.description }}</td>
+
+
+                                <td><a href="{{ dataset.get_uvlhub_doi() }}"
+
+
+                                       target="_blank">{{ dataset.get_uvlhub_doi() }}</a></td>
+
+
+                                <td>
+
+
+                            </tr>
+
+
+                        {% endfor %}
+
+
+                        </tbody>
+
+
+                    </table>
+
+
+                </div>
+
+
+
+
+
+            </div>
+
+
+
+
+
+        </div>
+
+
+    {% else %}
+
+
+        <div class="col-12 col-md-6">
+
+
+            <div class="card">
+
+
+                <div class="card-header">
+
+
+                    <h5 class="card-title mb-0">No datasets found</h5>
+
+
+                </div>
+
+
+                <div class="card-body">
+
+
+                    <p class="card-text">
+
+
+                        This user has not uploaded any dataset yet.
+
+
+                    </p>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    {% endif %}
+
+
+
+
+
+{% endblock %}
